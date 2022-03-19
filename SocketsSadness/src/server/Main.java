@@ -1,14 +1,16 @@
 package server;
 
+import common.SimulationStatus;
+
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Main {
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         try {
             ServerSocket socketServer = new ServerSocket(6666);
             System.out.println("Starting the Devils Tea Server!");
@@ -31,14 +33,12 @@ public class Main {
 
         @Override
         public void run() {
-            try {
-                OutputStream outStream = clientSocket.getOutputStream();
-                PrintWriter outWriter = new PrintWriter(outStream, true);
-                outWriter.println("418 I'm a Teapot");
-
-                outWriter.close();
-                clientSocket.close();
-
+            try (
+                    clientSocket;
+                    OutputStream outStream = clientSocket.getOutputStream();
+                    ObjectOutputStream out = new ObjectOutputStream(outStream)
+            ) {
+                out.writeObject(SimulationStatus.RUNNING);
             } catch (IOException e) {
                 e.printStackTrace();
             }
