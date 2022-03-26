@@ -1,22 +1,22 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class Rectangle extends JPanel {
+public class Triangle extends JPanel {
     Color color;
 
     int width = 30;
     int height = 30;
 
-    public Rectangle(Color color) {
+    public Triangle(Color color) {
         this.color = color;
         setPreferredSize(new Dimension (width,height));
     }
 
     public void paintComponent(Graphics g)    {
         super.paintComponent(g);
-        g.drawRect(0, 0, width, height);
+        g.drawPolygon(new int[] {0, 15,30}, new int[] {30, 0, 30}, 3);
         g.setColor(color);
-        g.fillRect(0, 0, width, height);
+        g.fillPolygon(new int[] {0, 15,30}, new int[] {30, 0, 30}, 3);
 
 
     }
