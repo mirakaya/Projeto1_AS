@@ -6,8 +6,10 @@ import java.util.concurrent.locks.ReentrantLock;
 public class OrderedMonitor {
     private final ReentrantLock lock;
     private final Condition[] awaitConditions;
+    private final Condition awaitExited;
 
     private final boolean[] awaitFlags;
+    private boolean exited = true;
 
     private final int size;
     private int count = 0;
@@ -18,6 +20,7 @@ public class OrderedMonitor {
         this.size = size;
         lock = new ReentrantLock();
         awaitConditions = new Condition[size];
+        awaitExited = lock.newCondition();
         awaitFlags = new boolean[size];
 
         for (int i = 0; i < awaitConditions.length; i++) {
@@ -39,8 +42,9 @@ public class OrderedMonitor {
             while(awaitFlags[awaitId])
                 awaitConditions[awaitId].await();
 
+            exited = true;
+            awaitExited.signal();
             System.out.println("Awoke " + awaitId);
-
         } catch (InterruptedException ignored) {}
         finally {
             lock.unlock();
@@ -53,13 +57,18 @@ public class OrderedMonitor {
 
             if (count == 0) return;
 
+            while(!exited)
+                awaitExited.await();
+
             final int toAwakeId = toAwakeIdx;
             count--;
             toAwakeIdx = (toAwakeIdx + 1) % size;
             awaitFlags[toAwakeId] = false;
+            exited = false;
 
             awaitConditions[toAwakeId].signal();
-        } finally {
+        } catch (InterruptedException ignored) {}
+        finally {
             lock.unlock();
         }
     }

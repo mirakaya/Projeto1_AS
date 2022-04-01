@@ -1,7 +1,5 @@
 package queues;
 
-import java.util.concurrent.TimeUnit;
-
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         /*
@@ -10,7 +8,7 @@ public class Main {
           if they are awoken one at time in a paused fashion
           they should come out in a ordered fashion.
          */
-        final int size = 30;
+        final int size = 1000;
         OrderedMonitor monitor = new OrderedMonitor(size);
         Thread[] awaiters = new Thread[size];
 
@@ -24,7 +22,6 @@ public class Main {
 
         for (int i = 0; i < size; i++) {
             monitor.awake();
-            TimeUnit.SECONDS.sleep(1);
         }
 
         for (int i = 0; i < size; i++) {
