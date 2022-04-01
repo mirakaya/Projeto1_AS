@@ -1,6 +1,5 @@
 
 # Prevent personal IDE files and folders to leak
 # into the repo
-.idea/
 .vscode/
 out/
