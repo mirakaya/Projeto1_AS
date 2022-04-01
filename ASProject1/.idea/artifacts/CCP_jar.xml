@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="CCP:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/CCP_jar</output-path>
+    <root id="archive" name="CPP.jar">
+      <element id="module-output" name="ASProject1" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/META-INF-CCP/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>

@@ -1,2 +1,7 @@
-package HCP.Main;public class Main {
+package HCP.Main;
+
+public class Main {
+    public static void main(String[] args) {
+
+    }
 }

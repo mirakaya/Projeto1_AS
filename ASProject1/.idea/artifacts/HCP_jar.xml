@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="HCP:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/HCP_jar</output-path>
+    <root id="archive" name="HCP.jar">
+      <element id="module-output" name="ASProject1" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/META-INF-HCP/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>
