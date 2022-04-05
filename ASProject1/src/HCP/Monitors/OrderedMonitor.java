@@ -44,7 +44,7 @@ public class OrderedMonitor {
 
             exited = true;
             awaitExited.signal();
-            System.out.println("Awoke " + awaitId);
+            //System.out.println("Awoke " + awaitId);
         } catch (InterruptedException ignored) {}
         finally {
             lock.unlock();

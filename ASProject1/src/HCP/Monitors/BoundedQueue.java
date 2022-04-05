@@ -32,6 +32,7 @@ public class BoundedQueue<T> {
         this.putIndex = (this.putIndex + 1) % this.size;
     }
 
+    @SuppressWarnings("unchecked")
     public T dequeue() {
         if (this.isEmpty()) throw new IllegalStateException("The queue is empty");
 
