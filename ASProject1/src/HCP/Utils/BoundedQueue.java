@@ -1,4 +1,4 @@
-package HCP.Monitors;
+package HCP.Utils;
 
 /**
  * Implementation of a simple non synchronized queue
@@ -20,12 +20,14 @@ public class BoundedQueue<T> {
         this.storage = new Object[size];
     }
 
+    public boolean isFull() { return this.count == this.size; }
+
     public boolean isEmpty() {
         return this.count == 0;
     }
 
     public void enqueue(T obj) {
-        if (this.count == this.size) throw new IllegalStateException("The queue of full");
+        if (this.isFull()) throw new IllegalStateException("The queue of full");
 
         this.storage[this.putIndex] = obj;
         this.count++;
