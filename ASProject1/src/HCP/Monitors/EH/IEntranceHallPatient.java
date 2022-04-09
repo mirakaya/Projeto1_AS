@@ -12,10 +12,10 @@ public interface IEntranceHallPatient {
      * Waits for a room to be free at the entrance hall.
      * If a room is already free the method returns immediately.
      *
-     * @param threadId Id of the thread for logging purposes
+     * @param patientId Id of the patient for logging purposes
      * @param age Age of the patient
      */
-    void waitFreeRoom(int threadId, PatientAge age);
+    void waitFreeRoom(int patientId, PatientAge age);
 
     /**
      * Patient calls the method to enter the entrance hall

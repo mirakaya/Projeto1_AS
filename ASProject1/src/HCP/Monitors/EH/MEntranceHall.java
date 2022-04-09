@@ -34,7 +34,7 @@ public class MEntranceHall implements IEntranceHallCallCenter, IEntranceHallPati
     }
 
     @Override
-    public void waitFreeRoom(int threadId, PatientAge age) {
+    public void waitFreeRoom(int patientId, PatientAge age) {
         monitor.lock();
 
         final Condition waitFreeSeat = waitFreeSeats.get(age);
