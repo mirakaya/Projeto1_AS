@@ -2,6 +2,7 @@ package HCP.Monitors.EH;
 
 import HCP.Enums.PatientAge;
 import HCP.Utils.BoundedQueue;
+import HCP.Utils.Counter;
 import HCP.Utils.OrderedMonitor;
 
 import java.util.HashMap;
@@ -14,22 +15,21 @@ public class MEntranceHall implements IEntranceHallCallCenter, IEntranceHallPati
     // Seats for the patients
     private final HashMap<PatientAge, OrderedMonitor> rooms = new HashMap<>();
     // Counts the amount of patients seating in a room
-    private final HashMap<PatientAge, Integer> seatsCounter = new HashMap<>();
+    private final Counter counter;
     // Queue used to determine what is the age of the next patient
     private final BoundedQueue<PatientAge> ageQueue;
     // Hashmap used to map the patients to the proper Condition
-    // with PatientAge as a key
     private final HashMap<PatientAge, Condition> waitFreeSeats = new HashMap<>();
 
     private int ethNumberCounter = 1;
 
     public MEntranceHall(int nSeats) {
         ageQueue = new BoundedQueue<>(nSeats);
+        counter = new Counter(nSeats / 2);
 
         for (PatientAge age : PatientAge.values()) {
             waitFreeSeats.put(age, monitor.newCondition());
             rooms.put(age, new OrderedMonitor(nSeats / 2, monitor));
-            seatsCounter.put(age, 0);
         }
     }
 
@@ -40,14 +40,14 @@ public class MEntranceHall implements IEntranceHallCallCenter, IEntranceHallPati
         final Condition waitFreeSeat = waitFreeSeats.get(age);
 
         try {
-            while (seatsCounter.get(age) == rooms.size()) {
+            while (counter.reachedLimit(age)) {
                 waitFreeSeat.await();
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        seatsCounter.put(age, seatsCounter.get(age) + 1);
+        counter.increment(age);
 
         monitor.unlock();
     }
@@ -61,7 +61,7 @@ public class MEntranceHall implements IEntranceHallCallCenter, IEntranceHallPati
 
         ageQueue.enqueue(age);
         room.await();
-        seatsCounter.put(age, seatsCounter.get(age) - 1);
+        counter.decrement(age);
 
         monitor.unlock();
     }
