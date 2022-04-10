@@ -1,29 +1,34 @@
 package HCP.Entities;
 
-import HCP.Monitors.CCH.ICCHControlCenter;
-import HCP.Monitors.EH.IEHControlCenter;
-import HCP.Monitors.CCH.CCHCall;
+import HCP.Enums.CallCenterCall;
+import HCP.Monitors.CCH.ICCHallCallCenter;
+import HCP.Monitors.EH.IEntranceHallCallCenter;
 
+/**
+ * Thread representing the Call Center Entity
+ */
 public class CallCenter extends Thread {
-    private final ICCHControlCenter cch;
-    private final IEHControlCenter eh;
+    private final IEntranceHallCallCenter eh;
+    private final ICCHallCallCenter cch;
 
-    public CallCenter(ICCHControlCenter cch, IEHControlCenter eh) {
-        this.cch = cch;
+    public CallCenter(IEntranceHallCallCenter eh, ICCHallCallCenter cch) {
         this.eh = eh;
+        this.cch = cch;
+
+        setDaemon(true);
     }
 
     @Override
     public void run() {
-        boolean shouldRun = true;
+        CallCenterCall nextCall = null;
 
-        while(shouldRun) {
-            CCHCall next = this.cch.nextCall();
+        while (nextCall != CallCenterCall.EXIT) {
+            cch.waitManualOrder();
+            nextCall = cch.waitCall();
 
-            switch (next) {
-                case ADULT_PATIENT_LEFT -> this.eh.informFreeAdultSeat();
-                case CHILD_PATIENT_LEFT -> this.eh.informFreeChildSeat();
-                case CLOSE_CC -> shouldRun = false;
+            switch (nextCall) {
+                case EV_PATIENT_LEFT -> eh.informEvaluationRoomFree();
+                case EXIT -> {}
             }
         }
     }
