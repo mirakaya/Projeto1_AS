@@ -63,6 +63,15 @@ public class MCCHall implements ICCHallPatient, ICCHallCallCenter{
     public void informLeftEVHall() {
         monitor.lock();
         callQueue.enqueue(CallCenterCall.EV_PATIENT_LEFT);
+        waitCall.signal();
+        monitor.unlock();
+    }
+
+    // Test code
+    public void informExit() {
+        monitor.lock();
+        callQueue.enqueue(CallCenterCall.EXIT);
+        waitCall.signal();
         monitor.unlock();
     }
 }

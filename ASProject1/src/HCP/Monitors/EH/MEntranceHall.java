@@ -14,6 +14,9 @@ public class MEntranceHall implements IEntranceHallCallCenter, IEntranceHallPati
 
     // Seats for the patients
     private final HashMap<PatientAge, OrderedMonitor> rooms = new HashMap<>();
+    // Number of free rooms in the Evaluation Hall if none has been
+    // attributed to an already waiting patient
+    private int evFreeRooms = 4;
     // Counts the amount of patients seating in a room
     private final Counter counter;
     // Queue used to determine what is the age of the next patient
@@ -41,6 +44,9 @@ public class MEntranceHall implements IEntranceHallCallCenter, IEntranceHallPati
 
         try {
             while (counter.reachedLimit(age)) {
+                // Test code
+                System.out.println(age + " patient is waiting for free rooms in eth");
+                // End of test code
                 waitFreeSeat.await();
             }
         } catch (InterruptedException e) {
@@ -59,9 +65,21 @@ public class MEntranceHall implements IEntranceHallCallCenter, IEntranceHallPati
         final int ethNumber = ethNumberCounter++;
         final OrderedMonitor room = rooms.get(age);
 
-        ageQueue.enqueue(age);
-        room.await();
+        if (evFreeRooms == 0) {
+            // Test code
+            System.out.println(age + " patient " + ethNumber + " is waiting for free rooms on evh");
+            // End of test code
+            ageQueue.enqueue(age);
+            room.await();
+        } else {
+            evFreeRooms--;
+        }
+
         counter.decrement(age);
+
+        // Test code
+        System.out.println(age + " patient " + ethNumber + " is leaving");
+        // End of test code
 
         monitor.unlock();
     }
@@ -76,8 +94,12 @@ public class MEntranceHall implements IEntranceHallCallCenter, IEntranceHallPati
     @Override
     public void informEvaluationRoomFree() {
         monitor.lock();
-        PatientAge age = ageQueue.dequeue();
-        rooms.get(age).awake();
+        if (!ageQueue.isEmpty()) {
+            PatientAge age = ageQueue.dequeue();
+            rooms.get(age).awake();
+        } else {
+            evFreeRooms++;
+        }
         monitor.unlock();
     }
 }
