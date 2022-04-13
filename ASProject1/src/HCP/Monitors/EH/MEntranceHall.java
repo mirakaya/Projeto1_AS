@@ -45,7 +45,7 @@ public class MEntranceHall implements IEntranceHallCallCenter, IEntranceHallPati
         try {
             while (counter.reachedLimit(age)) {
                 // Test code
-                System.out.println(age + " patient is waiting for free rooms in eth");
+                //System.out.println(age + " patient is waiting for free rooms in eth");
                 // End of test code
                 waitFreeSeat.await();
             }
@@ -67,7 +67,7 @@ public class MEntranceHall implements IEntranceHallCallCenter, IEntranceHallPati
 
         if (evFreeRooms == 0) {
             // Test code
-            System.out.println(age + " patient " + ethNumber + " is waiting for free rooms on evh");
+            //System.out.println(age + " patient " + ethNumber + " is waiting for free rooms on evh");
             // End of test code
             ageQueue.enqueue(age);
             room.await();
@@ -78,7 +78,7 @@ public class MEntranceHall implements IEntranceHallCallCenter, IEntranceHallPati
         counter.decrement(age);
 
         // Test code
-        System.out.println(age + " patient " + ethNumber + " is leaving");
+        //System.out.println(age + " patient " + ethNumber + " is leaving");
         // End of test code
 
         monitor.unlock();
