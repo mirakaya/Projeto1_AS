@@ -4,6 +4,8 @@ import HCP.Enums.PatientAge;
 import HCP.Monitors.CCH.ICCHallPatient;
 import HCP.Monitors.EH.IEntranceHallPatient;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Patient Thread
  */
@@ -31,5 +33,14 @@ public class Patient extends Thread {
         eh.waitFreeRoom(id, age);
         eh.waitEvaluationHallCall(age);
         eh.awakeWaitingPatient(age);
+
+        // Temporary code for testing purposes
+        try {
+            TimeUnit.SECONDS.sleep(3);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        cch.informLeftEVHall();
     }
 }

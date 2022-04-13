@@ -1,51 +1,37 @@
 package HCP.Main;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.nio.channels.SocketChannel;
+import HCP.Entities.CallCenter;
+import HCP.Entities.Patient;
+import HCP.Enums.PatientAge;
+import HCP.Monitors.CCH.MCCHall;
+import HCP.Monitors.EH.MEntranceHall;
 
 public class Main {
+    public static void main(String[] args) throws InterruptedException {
+        MCCHall cch = new MCCHall();
+        MEntranceHall eh = new MEntranceHall(4);
+        CallCenter cc = new CallCenter(eh, cch);
+        Patient[] childPatients = new Patient[15];
+        Patient[] adultPatients = new Patient[15];
 
-    //connection via sockets - tested
-
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
-
-        int port = 8080;
-        ServerSocket ss = new ServerSocket(port);
-        Socket socket = ss.accept();
-        ObjectInputStream is;
-
-        while (true) {
-            System.out.println("Server Connected");
-            is = new ObjectInputStream(socket.getInputStream());
-            Object obj = (Object) is.readObject();
-            System.out.println("Obj - " + obj);
+        for (int i = 0; i < childPatients.length; i++) {
+            childPatients[i] = new Patient(eh, cch, PatientAge.CHILD);
+            adultPatients[i] = new Patient(eh, cch, PatientAge.ADULT);
         }
 
+        cc.start();
 
-        /*System.out.println("Accepting connections...");
+        for (int i = 0; i < childPatients.length; i++) {
+            childPatients[i].start();
+            adultPatients[i].start();
+        }
 
-        ObjectInputStream is = new ObjectInputStream(socket.getInputStream());
+        for (int i = 0; i < childPatients.length; i++) {
+            childPatients[i].join();
+            adultPatients[i].join();
+        }
 
-        while (true) {*/
-
-
-            //ObjectOutputStream os = new ObjectOutputStream(socket.getOutputStream());
-
-            /*int[] info = (int[]) is.readObject();
-
-            for (int i = 0; i < info.length; i++) {
-                System.out.println(info[i]);
-            }*/
-
-           /* System.out.println(is);
-
-        }*/
-
-
+        cch.informExit();
+        cc.join();
     }
 }
