@@ -36,9 +36,8 @@ public class Main {
             childPatients[i].join();
             adultPatients[i].join();
         }
-
+      
         cch.informExit();
-
         nurse.join();
         cc.join();
     }

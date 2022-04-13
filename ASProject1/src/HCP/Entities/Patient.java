@@ -6,6 +6,8 @@ import HCP.Monitors.CCH.ICCHallPatient;
 import HCP.Monitors.EH.IEntranceHallPatient;
 import HCP.Monitors.EVH.IEVPatient;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Patient Thread
  */
