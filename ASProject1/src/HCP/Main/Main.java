@@ -7,12 +7,16 @@ import HCP.Enums.PatientAge;
 import HCP.Monitors.CCH.MCCHall;
 import HCP.Monitors.EH.MEntranceHall;
 import HCP.Monitors.EVH.MEvaluationHall;
+import HCP.Monitors.Logger;
 
 public class Main {
+
     public static void main(String[] args) throws InterruptedException {
         MCCHall cch = new MCCHall();
         MEntranceHall eh = new MEntranceHall(4);
-        MEvaluationHall evh = new MEvaluationHall(30, 1000);
+        MEvaluationHall evh = new MEvaluationHall(30, 0);
+
+        Logger log = new Logger(30);
 
         CallCenter cc = new CallCenter(eh, cch);
         Nurse nurse = new Nurse(evh);
@@ -20,8 +24,8 @@ public class Main {
         Patient[] adultPatients = new Patient[15];
 
         for (int i = 0; i < childPatients.length; i++) {
-            childPatients[i] = new Patient(eh, cch, evh, PatientAge.CHILD);
-            adultPatients[i] = new Patient(eh, cch, evh, PatientAge.ADULT);
+            childPatients[i] = new Patient(eh, cch, evh, PatientAge.CHILD, log);
+            adultPatients[i] = new Patient(eh, cch, evh, PatientAge.ADULT, log);
         }
 
         cc.start();
@@ -40,5 +44,9 @@ public class Main {
         cch.informExit();
         nurse.join();
         cc.join();
+    }
+
+    public void writeee(){
+        return;
     }
 }

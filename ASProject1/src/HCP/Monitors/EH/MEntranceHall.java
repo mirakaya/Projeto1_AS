@@ -55,6 +55,7 @@ public class MEntranceHall implements IEntranceHallCallCenter, IEntranceHallPati
 
         counter.increment(age);
 
+
         monitor.unlock();
     }
 

@@ -13,6 +13,6 @@ public enum PatientEvaluation {
     private final static int length = values.length;
 
     public static PatientEvaluation random() {
-        return values[generator.nextInt(1, length)];
+        return values[generator.nextInt(length)];
     }
 }
