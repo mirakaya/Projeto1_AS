@@ -7,16 +7,16 @@ import HCP.Enums.PatientAge;
 import HCP.Monitors.CCH.MCCHall;
 import HCP.Monitors.EH.MEntranceHall;
 import HCP.Monitors.EVH.MEvaluationHall;
-import HCP.Monitors.Logger;
+import HCP.Monitors.MLogger;
 
 public class Main {
 
     public static void main(String[] args) throws InterruptedException {
         MCCHall cch = new MCCHall();
         MEntranceHall eh = new MEntranceHall(4);
-        MEvaluationHall evh = new MEvaluationHall(30, 0);
+        MEvaluationHall evh = new MEvaluationHall(30, 1000);
 
-        Logger log = new Logger(30);
+        MLogger log = new MLogger(30);
 
         CallCenter cc = new CallCenter(eh, cch);
         Nurse nurse = new Nurse(evh);

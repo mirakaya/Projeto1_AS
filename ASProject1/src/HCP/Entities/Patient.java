@@ -3,13 +3,10 @@ package HCP.Entities;
 import HCP.Enums.AvailableHalls;
 import HCP.Enums.PatientAge;
 import HCP.Enums.PatientEvaluation;
-import HCP.Main.Main;
 import HCP.Monitors.CCH.ICCHallPatient;
 import HCP.Monitors.EH.IEntranceHallPatient;
 import HCP.Monitors.EVH.IEVPatient;
-import HCP.Monitors.Logger;
-
-import java.util.concurrent.TimeUnit;
+import HCP.Monitors.MLogger;
 
 /**
  * Patient Thread
@@ -24,13 +21,13 @@ public class Patient extends Thread {
     private final IEVPatient evh;
     private final ICCHallPatient cch;
 
-    private final Logger log;
+    private final MLogger log;
 
 
 
     public Patient(
             IEntranceHallPatient eh, ICCHallPatient cch, IEVPatient evh,
-            PatientAge age, Logger log
+            PatientAge age, MLogger log
     ) {
         this.age = age;
         this.eh = eh;
@@ -43,13 +40,17 @@ public class Patient extends Thread {
 
     @Override
     public void run() {
+
+
+
         eh.waitFreeRoom(id, age);
-        eh.waitEvaluationHallCall(age);
         log.createContent(id, AvailableHalls.ETH);
+        eh.waitEvaluationHallCall(age);
+
         eh.awakeWaitingPatient(age);
         PatientEvaluation evaluation = evh.waitEvaluation();
         cch.informLeftEVHall();
-        log.createContent(id, AvailableHalls.ET1);
+        //log.createContent(id, AvailableHalls.ET1);
         //Thread.currentThread().stop();
     }
 }
