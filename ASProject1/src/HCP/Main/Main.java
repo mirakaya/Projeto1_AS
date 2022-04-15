@@ -10,14 +10,18 @@ import HCP.Monitors.EVH.MEvaluationHall;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
+        final int nChildPatients = 50;
+        final int nAdultPatients = 50;
+        final int nPatients = nChildPatients + nAdultPatients;
+
         MCCHall cch = new MCCHall();
         MEntranceHall eh = new MEntranceHall(4);
-        MEvaluationHall evh = new MEvaluationHall(30, 1000);
+        MEvaluationHall evh = new MEvaluationHall(nPatients, 1000);
 
         CallCenter cc = new CallCenter(eh, cch);
         Nurse nurse = new Nurse(evh);
-        Patient[] childPatients = new Patient[15];
-        Patient[] adultPatients = new Patient[15];
+        Patient[] childPatients = new Patient[nChildPatients];
+        Patient[] adultPatients = new Patient[nAdultPatients];
 
         for (int i = 0; i < childPatients.length; i++) {
             childPatients[i] = new Patient(eh, cch, evh, PatientAge.CHILD);
