@@ -1,8 +1,6 @@
 package HCP.Monitors;
 
 import HCP.Enums.AvailableHalls;
-import HCP.Enums.CallCenterCall;
-import HCP.Utils.BoundedQueue;
 import HCP.Utils.UnboundedQueue;
 
 import java.io.*;

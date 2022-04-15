@@ -8,6 +8,8 @@ import HCP.Monitors.EH.IEntranceHallPatient;
 import HCP.Monitors.EVH.IEVPatient;
 import HCP.Monitors.MLogger;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Patient Thread
  */
@@ -21,9 +23,7 @@ public class Patient extends Thread {
     private final IEVPatient evh;
     private final ICCHallPatient cch;
 
-    private final MLogger log;
-
-
+    private MLogger log;
 
     public Patient(
             IEntranceHallPatient eh, ICCHallPatient cch, IEVPatient evh,
@@ -40,17 +40,11 @@ public class Patient extends Thread {
 
     @Override
     public void run() {
-
-
-
         eh.waitFreeRoom(id, age);
         log.createContent(id, AvailableHalls.ETH);
         eh.waitEvaluationHallCall(age);
-
         eh.awakeWaitingPatient(age);
         PatientEvaluation evaluation = evh.waitEvaluation();
         cch.informLeftEVHall();
-        //log.createContent(id, AvailableHalls.ET1);
-        //Thread.currentThread().stop();
     }
 }

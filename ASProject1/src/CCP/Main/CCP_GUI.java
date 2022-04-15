@@ -314,7 +314,7 @@ public class CCP_GUI {
         // set the size of frame
         frame_main.setSize(1000,400 );
 
-        //frame_main.show();
+        frame_main.show();
     }
 
 
