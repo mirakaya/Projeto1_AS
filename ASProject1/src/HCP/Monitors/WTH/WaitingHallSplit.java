@@ -71,7 +71,7 @@ public class WaitingHallSplit {
 
     public void waitMDWCall(int wtn, PatientAge age, PatientEvaluation evaluation) {
         wtrMonitor.lock();
-        System.out.println(age + " Patient with wtn " + wtn + " entered WTR");
+        System.out.println(age + " Patient with wtn " + wtn + " and evaluation " + evaluation + " entered WTR");
         wthExitTicker.exit();
 
         if (freeMDWCounter == 0) {
@@ -81,7 +81,7 @@ public class WaitingHallSplit {
         else
             freeMDWCounter--;
 
-        System.out.println(age + " Patient with wtn " + wtn + " exited WTR");
+        System.out.println(age + " Patient with wtn " + wtn + " and evaluation " + evaluation + " exited WTR");
         wtrMonitor.unlock();
     }
 
