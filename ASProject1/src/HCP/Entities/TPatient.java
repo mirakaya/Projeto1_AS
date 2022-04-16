@@ -5,6 +5,7 @@ import HCP.Enums.PatientEvaluation;
 import HCP.Monitors.CCH.ICCHallPatient;
 import HCP.Monitors.EH.IEntranceHallPatient;
 import HCP.Monitors.EVH.IEVPatient;
+import HCP.Monitors.MDH.IMDHPatient;
 import HCP.Monitors.WTH.IWTHPatient;
 
 /**
@@ -20,17 +21,19 @@ public class TPatient extends Thread {
     private final IEVPatient evh;
     private final ICCHallPatient cch;
     private final IWTHPatient wth;
+    private final IMDHPatient mdh;
 
     public TPatient(
             IEntranceHallPatient eh, ICCHallPatient cch,
             IEVPatient evh, IWTHPatient wth,
-            PatientAge age
+            IMDHPatient mdh, PatientAge age
     ) {
         this.age = age;
         this.eh = eh;
         this.cch = cch;
         this.evh = evh;
         this.wth = wth;
+        this.mdh = mdh;
 
         setDaemon(true);
     }
@@ -47,7 +50,11 @@ public class TPatient extends Thread {
         cch.informLeftWTR(age);
         wth.waitMDWCall(wtn, age,evaluation);
 
-        // Missing code here to fill in later
+        int mdhRoom = mdh.waitMDRCall(age, wtn);
         cch.informLeftMDW(age);
+        mdh.waitMDRConcluded(age, wtn, mdhRoom);
+        cch.informLeftMDR(age);
+
+        //Missing code under this comment
     }
 }

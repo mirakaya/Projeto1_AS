@@ -27,7 +27,7 @@ public class ConditionEvaluationQueue {
         try {
             QueuePositionData queuePosition = new QueuePositionData(cond);
             evaluationQueue.get(evaluation).enqueue(queuePosition);
-            while (queuePosition.flag) {
+            while (queuePosition.isFlag()) {
                 cond.await();
             }
         } catch (InterruptedException e) {
@@ -42,6 +42,7 @@ public class ConditionEvaluationQueue {
                 var queuePosition = queue.dequeue();
                 queuePosition.setFlag(false);
                 queuePosition.getCond().signal();
+                return;
             }
         }
     }

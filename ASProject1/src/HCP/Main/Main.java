@@ -7,6 +7,7 @@ import HCP.Enums.PatientAge;
 import HCP.Monitors.CCH.MCCHall;
 import HCP.Monitors.EH.MEntranceHall;
 import HCP.Monitors.EVH.MEvaluationHall;
+import HCP.Monitors.MDH.MMedicalHall;
 import HCP.Monitors.WTH.MWaitingHall;
 
 public class Main {
@@ -18,16 +19,17 @@ public class Main {
         MCCHall cch = new MCCHall();
         MEntranceHall eh = new MEntranceHall(4);
         MEvaluationHall evh = new MEvaluationHall(nPatients, 100);
-        MWaitingHall wth = new MWaitingHall(nChildPatients, nAdultPatients, 2, 2);
+        MWaitingHall wth = new MWaitingHall(nChildPatients, nAdultPatients, 2, 1);
+        MMedicalHall mdh = new MMedicalHall(nChildPatients, nAdultPatients, 3000);
 
-        TCallCenter cc = new TCallCenter(eh, cch, wth);
+        TCallCenter cc = new TCallCenter(eh, cch, wth, mdh);
         TNurse nurse = new TNurse(evh);
         TPatient[] childPatients = new TPatient[nChildPatients];
         TPatient[] adultPatients = new TPatient[nAdultPatients];
 
         for (int i = 0; i < childPatients.length; i++) {
-            childPatients[i] = new TPatient(eh, cch, evh, wth, PatientAge.CHILD);
-            adultPatients[i] = new TPatient(eh, cch, evh, wth, PatientAge.ADULT);
+            childPatients[i] = new TPatient(eh, cch, evh, wth, mdh, PatientAge.CHILD);
+            adultPatients[i] = new TPatient(eh, cch, evh, wth, mdh, PatientAge.ADULT);
         }
 
         cc.start();

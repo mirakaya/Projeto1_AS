@@ -72,6 +72,7 @@ public class MCCHall implements ICCHallPatient, ICCHallCallCenter{
     public void informLeftWTR(PatientAge age) {
         monitor.lock();
         callQueue.enqueue(new Call(CallCenterCall.WTR_PATIENT_LEFT, age));
+        waitCall.signal();
         monitor.unlock();
     }
 
@@ -79,6 +80,15 @@ public class MCCHall implements ICCHallPatient, ICCHallCallCenter{
     public void informLeftMDW(PatientAge age) {
         monitor.lock();
         callQueue.enqueue(new Call(CallCenterCall.MDW_PATIENT_LEFT, age));
+        waitCall.signal();
+        monitor.unlock();
+    }
+
+    @Override
+    public void informLeftMDR(PatientAge age) {
+        monitor.lock();
+        callQueue.enqueue(new Call(CallCenterCall.MDR_PATIENT_LEFT, age));
+        waitCall.signal();
         monitor.unlock();
     }
 

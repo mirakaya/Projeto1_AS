@@ -102,6 +102,7 @@ public class WaitingHallSplit {
 
         if (waitingMDWCounter > 0) {
             waitingMDWCounter--;
+            System.out.println(age + " ");
             orderedWaitMDWCall.signal();
         } else
             freeMDWCounter++;
