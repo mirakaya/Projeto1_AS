@@ -5,10 +5,10 @@ import HCP.Monitors.EVH.IEVNurse;
 /**
  * Nurse Thread
  */
-public class Nurse extends Thread {
+public class TNurse extends Thread {
     private final IEVNurse evh;
 
-    public Nurse(IEVNurse evh) {
+    public TNurse(IEVNurse evh) {
         this.evh = evh;
 
         setDaemon(true);

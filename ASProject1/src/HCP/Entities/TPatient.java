@@ -5,13 +5,12 @@ import HCP.Enums.PatientEvaluation;
 import HCP.Monitors.CCH.ICCHallPatient;
 import HCP.Monitors.EH.IEntranceHallPatient;
 import HCP.Monitors.EVH.IEVPatient;
-
-import java.util.concurrent.TimeUnit;
+import HCP.Monitors.WTH.IWTHPatient;
 
 /**
  * Patient Thread
  */
-public class Patient extends Thread {
+public class TPatient extends Thread {
     private static int idCounter;
 
     private final int id = idCounter++;
@@ -20,15 +19,18 @@ public class Patient extends Thread {
     private final IEntranceHallPatient eh;
     private final IEVPatient evh;
     private final ICCHallPatient cch;
+    private final IWTHPatient wth;
 
-    public Patient(
-            IEntranceHallPatient eh, ICCHallPatient cch, IEVPatient evh,
+    public TPatient(
+            IEntranceHallPatient eh, ICCHallPatient cch,
+            IEVPatient evh, IWTHPatient wth,
             PatientAge age
     ) {
         this.age = age;
         this.eh = eh;
         this.cch = cch;
         this.evh = evh;
+        this.wth = wth;
 
         setDaemon(true);
     }
@@ -40,5 +42,12 @@ public class Patient extends Thread {
         eh.awakeWaitingPatient(age);
         PatientEvaluation evaluation = evh.waitEvaluation();
         cch.informLeftEVHall();
+
+        int wtn = wth.waitWTRFree(age);
+        cch.informLeftWTR(age);
+        wth.waitMDWCall(wtn, age,evaluation);
+
+        // Missing code here to fill in later
+        cch.informLeftMDW(age);
     }
 }

@@ -19,5 +19,5 @@ public interface ICCHallCallCenter {
      * if there was already one there.
      * @return Returns the next call for the Call Center to attend.
      */
-    CallCenterCall waitCall();
+    Call waitCall();
 }

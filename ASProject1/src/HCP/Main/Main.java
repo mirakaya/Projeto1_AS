@@ -1,31 +1,33 @@
 package HCP.Main;
 
-import HCP.Entities.CallCenter;
-import HCP.Entities.Nurse;
-import HCP.Entities.Patient;
+import HCP.Entities.TCallCenter;
+import HCP.Entities.TNurse;
+import HCP.Entities.TPatient;
 import HCP.Enums.PatientAge;
 import HCP.Monitors.CCH.MCCHall;
 import HCP.Monitors.EH.MEntranceHall;
 import HCP.Monitors.EVH.MEvaluationHall;
+import HCP.Monitors.WTH.MWaitingHall;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        final int nChildPatients = 50;
-        final int nAdultPatients = 50;
+        final int nChildPatients = 25;
+        final int nAdultPatients = 25;
         final int nPatients = nChildPatients + nAdultPatients;
 
         MCCHall cch = new MCCHall();
         MEntranceHall eh = new MEntranceHall(4);
-        MEvaluationHall evh = new MEvaluationHall(nPatients, 1000);
+        MEvaluationHall evh = new MEvaluationHall(nPatients, 100);
+        MWaitingHall wth = new MWaitingHall(nChildPatients, nAdultPatients, 2, 2);
 
-        CallCenter cc = new CallCenter(eh, cch);
-        Nurse nurse = new Nurse(evh);
-        Patient[] childPatients = new Patient[nChildPatients];
-        Patient[] adultPatients = new Patient[nAdultPatients];
+        TCallCenter cc = new TCallCenter(eh, cch, wth);
+        TNurse nurse = new TNurse(evh);
+        TPatient[] childPatients = new TPatient[nChildPatients];
+        TPatient[] adultPatients = new TPatient[nAdultPatients];
 
         for (int i = 0; i < childPatients.length; i++) {
-            childPatients[i] = new Patient(eh, cch, evh, PatientAge.CHILD);
-            adultPatients[i] = new Patient(eh, cch, evh, PatientAge.ADULT);
+            childPatients[i] = new TPatient(eh, cch, evh, wth, PatientAge.CHILD);
+            adultPatients[i] = new TPatient(eh, cch, evh, wth, PatientAge.ADULT);
         }
 
         cc.start();

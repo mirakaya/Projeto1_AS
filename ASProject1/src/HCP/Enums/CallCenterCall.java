@@ -7,5 +7,7 @@ package HCP.Enums;
  */
 public enum CallCenterCall {
     EV_PATIENT_LEFT,
+    WTR_PATIENT_LEFT,
+    MDW_PATIENT_LEFT,
     EXIT
 }
