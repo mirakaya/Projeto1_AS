@@ -49,7 +49,7 @@ public class WaitingHallSplit {
         wthMonitor.lock();
         wtnExitTicker.exit();
 
-        System.out.println(age + " patient with wtn " + wtn + " entered WTH");
+        //System.out.println(age + " patient with wtn " + wtn + " entered WTH");
 
         int wthExitTicket = wthExitTicker.acquire();
 
@@ -63,7 +63,7 @@ public class WaitingHallSplit {
 
         wthExitTicker.enter(wthExitTicket);
 
-        System.out.println(age + " Patient with wtn " + wtn + " exited WTH");
+        //System.out.println(age + " Patient with wtn " + wtn + " exited WTH");
 
         return wtn;
     }
@@ -71,7 +71,7 @@ public class WaitingHallSplit {
 
     public void waitMDWCall(int wtn, PatientAge age, PatientEvaluation evaluation) {
         wtrMonitor.lock();
-        System.out.println(age + " Patient with wtn " + wtn + " and evaluation " + evaluation + " entered WTR");
+        //System.out.println(age + " Patient with wtn " + wtn + " and evaluation " + evaluation + " entered WTR");
         wthExitTicker.exit();
 
         if (freeMDWCounter == 0) {
@@ -81,7 +81,7 @@ public class WaitingHallSplit {
         else
             freeMDWCounter--;
 
-        System.out.println(age + " Patient with wtn " + wtn + " and evaluation " + evaluation + " exited WTR");
+        //System.out.println(age + " Patient with wtn " + wtn + " and evaluation " + evaluation + " exited WTR");
         wtrMonitor.unlock();
     }
 
