@@ -57,6 +57,7 @@ public class TPatient extends Thread {
         // Missing code here to fill in later
   //      cch.informLeftMDW(age);
 
+
         pyh.waitPayment(id);
     }
 }

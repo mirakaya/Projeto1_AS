@@ -11,12 +11,15 @@ import HCP.Monitors.EVH.MEvaluationHall;
 import HCP.Monitors.PYH.IPYPatient;
 import HCP.Monitors.PYH.MPaymentHall;
 import HCP.Monitors.WTH.MWaitingHall;
+import HCP.gui.HCP_GUI;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         final int nChildPatients = 25;
         final int nAdultPatients = 25;
         final int nPatients = nChildPatients + nAdultPatients;
+
+        HCP_GUI hcp_gui = new HCP_GUI();
 
         MCCHall cch = new MCCHall();
         MEntranceHall eh = new MEntranceHall(4);
@@ -50,9 +53,10 @@ public class Main {
             childPatients[i].join();
             adultPatients[i].join();
         }
-      
+
         cch.informExit();
         nurse.join();
         cc.join();
+
     }
 }

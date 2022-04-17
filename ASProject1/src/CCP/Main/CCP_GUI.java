@@ -6,7 +6,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import javax.swing.*;
 
@@ -26,6 +28,8 @@ public class CCP_GUI {
     private JLabel l_MDT = new JLabel();
     private JLabel l_PYT = new JLabel();
     private JLabel l_time_to_move = new JLabel();
+
+    private JLabel l_state = new JLabel();
 
     private JTextField t_adult_patients = new JTextField("10");
     private JTextField t_child_patients = new JTextField("10");
@@ -53,17 +57,40 @@ public class CCP_GUI {
     private JPanel radio_panel = new JPanel();
 
     private Socket s;
+    private int port = 9090;
+    ServerSocket ss = new ServerSocket(port);
 
 
+    public CCP_GUI() throws IOException, ClassNotFoundException {
 
-    public CCP_GUI() {
+        BuildGUI();
 
         try {
             s = new Socket("127.0.0.1", 8080);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        BuildGUI();
+
+
+        receiveObjects();
+
+    }
+
+    private void receiveObjects() throws IOException, ClassNotFoundException {
+
+        Socket socket = ss.accept();
+        ObjectInputStream is;
+
+        while (true) {
+            System.out.println("Server Connected");
+            is = new ObjectInputStream(socket.getInputStream());
+            Object obj = (Object) is.readObject();
+            System.out.println("Obj received - " + obj);
+
+            l_state.setText(obj.toString());
+            l_state.updateUI();
+        }
+
 
     }
 
@@ -157,6 +184,9 @@ public class CCP_GUI {
        GridLayout grid2 = new GridLayout(0, 1);
        grid2.setVgap(20);
        grid2.setHgap(20);
+
+       l_state.setText("Running");
+
        sec_panel.setLayout(grid2);
 
        sec_panel.add(b_start2);
@@ -164,6 +194,8 @@ public class CCP_GUI {
        sec_panel.add(b_resume);
        sec_panel.add(b_stop);
        sec_panel.add(b_end);
+
+       sec_panel.add(l_state);
 
        b_start2.addActionListener( new ActionListener()
        {
@@ -338,14 +370,25 @@ public class CCP_GUI {
     }
 
 
-    private void open() {
+    private void open() throws IOException, ClassNotFoundException {
         frame_main.setVisible(true);
     }
 
+    private void change_state(Object obj){
 
-    public static void main(String[] args) {
+        l_state.setText(obj.toString());
+        l_state.updateUI();
+
+    }
+
+
+
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         CCP_GUI gui = new CCP_GUI();
+
         gui.open();
+
+
 
     }
 
