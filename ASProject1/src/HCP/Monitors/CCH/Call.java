@@ -25,4 +25,9 @@ public class Call {
     public PatientAge getAge() {
         return optionalAge;
     }
+
+    @Override
+    public String toString() {
+        return "Order: " + type + ", Age: " + optionalAge;
+    }
 }
