@@ -8,6 +8,7 @@ import HCP.Monitors.CCH.MCCHall;
 import HCP.Monitors.EH.MEntranceHall;
 import HCP.Monitors.EVH.MEvaluationHall;
 import HCP.Monitors.MDH.MMedicalHall;
+import HCP.Monitors.PYH.MPaymentHall;
 import HCP.Monitors.WTH.MWaitingHall;
 
 /**
@@ -31,6 +32,7 @@ public class Simulation {
     private final MEvaluationHall evh;
     private final MWaitingHall wth;
     private final MMedicalHall mdh;
+    private final MPaymentHall pyh;
 
     private final TPatient[] childThreads;
     private final TPatient[] adultThreads;
@@ -65,6 +67,7 @@ public class Simulation {
         evh = new MEvaluationHall(patientsCount, maxEvaluationDelay);
         wth = new MWaitingHall(childCount, adultCount, seatCount / 2, 1);
         mdh = new MMedicalHall(childCount, adultCount, maxTreatmentDelay);
+        pyh = new MPaymentHall(patientsCount, maxPaymentDelay);
 
         callCenterThread = new TCallCenter(eh, cch, wth, mdh);
         nurseThread = new TNurse(evh);
@@ -72,11 +75,11 @@ public class Simulation {
         adultThreads = new TPatient[adultCount];
 
         for (int i = 0; i < childCount; i++) {
-            childThreads[i] = new TPatient(eh, cch, evh, wth, mdh, PatientAge.CHILD);
+            childThreads[i] = new TPatient(eh, cch, evh, wth, mdh, pyh, PatientAge.CHILD);
         }
 
         for (int i = 0; i < adultCount; i++) {
-            adultThreads[i] = new TPatient(eh, cch, evh, wth, mdh, PatientAge.ADULT);
+            adultThreads[i] = new TPatient(eh, cch, evh, wth, mdh, pyh, PatientAge.ADULT);
         }
     }
 

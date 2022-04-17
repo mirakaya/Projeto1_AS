@@ -6,6 +6,7 @@ import HCP.Monitors.CCH.ICCHallPatient;
 import HCP.Monitors.EH.IEntranceHallPatient;
 import HCP.Monitors.EVH.IEVPatient;
 import HCP.Monitors.MDH.IMDHPatient;
+import HCP.Monitors.PYH.IPYPatient;
 import HCP.Monitors.WTH.IWTHPatient;
 
 /**
@@ -22,11 +23,13 @@ public class TPatient extends Thread {
     private final ICCHallPatient cch;
     private final IWTHPatient wth;
     private final IMDHPatient mdh;
+    private final IPYPatient pyh;
 
     public TPatient(
             IEntranceHallPatient eh, ICCHallPatient cch,
             IEVPatient evh, IWTHPatient wth,
-            IMDHPatient mdh, PatientAge age
+            IMDHPatient mdh, IPYPatient pyh,
+            PatientAge age
     ) {
         this.age = age;
         this.eh = eh;
@@ -34,6 +37,7 @@ public class TPatient extends Thread {
         this.evh = evh;
         this.wth = wth;
         this.mdh = mdh;
+        this.pyh = pyh;
 
         setDaemon(true);
     }
@@ -57,7 +61,7 @@ public class TPatient extends Thread {
             mdh.waitMDRConcluded(age, wtn, mdhRoom);
             cch.informLeftMDR(age);
 
-            //Missing code under this comment
+            pyh.waitPayment(id);
         } catch (InterruptedException ignored) {}
     }
 }
