@@ -12,11 +12,11 @@ public interface IWTHCallCenter {
      * Inform the next patient in queue
      * that a Waiting Hall Room is free.
      */
-    void informWTRFree(PatientAge age);
+    void informWTRFree(PatientAge age) throws InterruptedException;
 
     /**
      * Inform the next patient in a
      * Waiting Hall room that a MDW Seat is free.
      */
-    void informMDWFree(PatientAge age);
+    void informMDWFree(PatientAge age) throws InterruptedException;
 }

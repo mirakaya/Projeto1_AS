@@ -40,21 +40,24 @@ public class TPatient extends Thread {
 
     @Override
     public void run() {
-        eh.waitFreeRoom(id, age);
-        eh.waitEvaluationHallCall(age);
-        eh.awakeWaitingPatient(age);
-        PatientEvaluation evaluation = evh.waitEvaluation();
-        cch.informLeftEVHall();
+        try {
 
-        int wtn = wth.waitWTRFree(age);
-        cch.informLeftWTR(age);
-        wth.waitMDWCall(wtn, age,evaluation);
+            eh.waitFreeRoom(id, age);
+            eh.waitEvaluationHallCall(age);
+            eh.awakeWaitingPatient(age);
+            PatientEvaluation evaluation = evh.waitEvaluation();
+            cch.informLeftEVHall();
 
-        int mdhRoom = mdh.waitMDRCall(age, wtn);
-        cch.informLeftMDW(age);
-        mdh.waitMDRConcluded(age, wtn, mdhRoom);
-        cch.informLeftMDR(age);
+            int wtn = wth.waitWTRFree(age);
+            cch.informLeftWTR(age);
+            wth.waitMDWCall(wtn, age,evaluation);
 
-        //Missing code under this comment
+            int mdhRoom = mdh.waitMDRCall(age, wtn);
+            cch.informLeftMDW(age);
+            mdh.waitMDRConcluded(age, wtn, mdhRoom);
+            cch.informLeftMDR(age);
+
+            //Missing code under this comment
+        } catch (InterruptedException ignored) {}
     }
 }

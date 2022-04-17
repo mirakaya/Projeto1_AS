@@ -19,30 +19,26 @@ public class MTickets {
         }
     }
 
-    public int acquire() {
+    public int acquire() throws InterruptedException {
         int ticket;
 
-        monitor.lock();
+        monitor.lockInterruptibly();
         ticket = ticketCounter++;
         monitor.unlock();
 
         return ticket;
     }
 
-    public void enter(int ticket) {
-        monitor.lock();
-        try {
-            while (nextTicket != ticket) {
-                turns[ticket - 1].await();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public void enter(int ticket) throws InterruptedException {
+        monitor.lockInterruptibly();
+        while (nextTicket != ticket) {
+            turns[ticket - 1].await();
         }
         monitor.unlock();
     }
 
-    public void exit() {
-        monitor.lock();
+    public void exit() throws InterruptedException {
+        monitor.lockInterruptibly();
         if (nextTicket != limit) {
             int ticket = nextTicket;
             nextTicket++;

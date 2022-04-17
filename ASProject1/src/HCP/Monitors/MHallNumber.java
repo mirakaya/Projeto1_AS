@@ -6,8 +6,8 @@ public class MHallNumber {
     private final ReentrantLock monitor = new ReentrantLock();
     private int next = 1;
 
-    public int getNextHallHumber() {
-        monitor.lock();
+    public int getNextHallHumber() throws InterruptedException {
+        monitor.lockInterruptibly();
         int result = next++;
         monitor.unlock();
 

@@ -27,22 +27,22 @@ public class MWaitingHall implements IWTHPatient, IWTHCallCenter {
 
 
     @Override
-    public int waitWTRFree(PatientAge age) {
+    public int waitWTRFree(PatientAge age) throws InterruptedException {
         return ageSplits.get(age).waitWTRFree(age);
     }
 
     @Override
-    public void waitMDWCall(int wtn, PatientAge age, PatientEvaluation evaluation) {
+    public void waitMDWCall(int wtn, PatientAge age, PatientEvaluation evaluation) throws InterruptedException {
         ageSplits.get(age).waitMDWCall(wtn, age, evaluation);
     }
 
     @Override
-    public void informWTRFree(PatientAge age) {
+    public void informWTRFree(PatientAge age) throws InterruptedException {
         ageSplits.get(age).informWTRFree(age);
     }
 
     @Override
-    public void informMDWFree(PatientAge age) {
+    public void informMDWFree(PatientAge age) throws InterruptedException {
         ageSplits.get(age).informMDWFree(age);
     }
 }

@@ -31,17 +31,19 @@ public class TCallCenter extends Thread {
     public void run() {
         Call nextCall = null;
 
-        while (nextCall != Call.EXIT_CALL) {
-            cch.waitManualOrder();
-            nextCall = cch.waitCall();
+        try {
+            while (nextCall != Call.EXIT_CALL) {
+                cch.waitManualOrder();
+                nextCall = cch.waitCall();
 
-            switch (nextCall.getType()) {
-                case EV_PATIENT_LEFT -> eh.informEvaluationRoomFree();
-                case WTR_PATIENT_LEFT -> wth.informWTRFree(nextCall.getAge());
-                case MDW_PATIENT_LEFT -> wth.informMDWFree(nextCall.getAge());
-                case MDR_PATIENT_LEFT -> mdh.informMDRFree(nextCall.getAge());
-                case EXIT -> System.out.println("All patients treated! Exiting!");
+                switch (nextCall.getType()) {
+                    case EV_PATIENT_LEFT -> eh.informEvaluationRoomFree();
+                    case WTR_PATIENT_LEFT -> wth.informWTRFree(nextCall.getAge());
+                    case MDW_PATIENT_LEFT -> wth.informMDWFree(nextCall.getAge());
+                    case MDR_PATIENT_LEFT -> mdh.informMDRFree(nextCall.getAge());
+                    case EXIT -> System.out.println("All patients treated! Exiting!");
+                }
             }
-        }
+        } catch (InterruptedException ignored) {}
     }
 }

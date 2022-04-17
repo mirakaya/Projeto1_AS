@@ -25,19 +25,14 @@ public class MedicalHallSplit {
         mdrFreeRooms.enqueue(2);
     }
 
-    public int waitMDRCall(PatientAge age, int wtn) {
+    public int waitMDRCall(PatientAge age, int wtn) throws InterruptedException {
         int ticket = ticker.acquire();
 
         ticker.enter(ticket);
         hallMonitor.lock();
 
         // System.out.println(age + " patient with wtn " + wtn + " has entered the MDW");
-
-        try {
-            while (mdrFreeRooms.isEmpty()) waitMDRFree.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        while (mdrFreeRooms.isEmpty()) waitMDRFree.await();
 
         int freeRoom = mdrFreeRooms.dequeue();
 
@@ -50,7 +45,7 @@ public class MedicalHallSplit {
     }
 
 
-    public void waitMDRConcluded(PatientAge age, int wtn, int room) {
+    public void waitMDRConcluded(PatientAge age, int wtn, int room) throws InterruptedException {
         try {
             // System.out.println(age + " patient with wtn " + wtn + " is being treated at MDR " + room);
             TimeUnit.MILLISECONDS.sleep(treatmentTime);
@@ -58,15 +53,15 @@ public class MedicalHallSplit {
             e.printStackTrace();
         }
 
-        hallMonitor.lock();
+        hallMonitor.lockInterruptibly();
         mdrFreeRooms.enqueue(room);
         // System.out.println(age + " patient with wtn " + wtn + " is leaving MDR " + room);
         hallMonitor.unlock();
     }
 
 
-    public void informMDRFree(PatientAge age) {
-        hallMonitor.lock();
+    public void informMDRFree(PatientAge age) throws InterruptedException {
+        hallMonitor.lockInterruptibly();
         // System.out.println("Informing there is room free MDR " + age);
         waitMDRFree.signal();
         hallMonitor.unlock();

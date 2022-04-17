@@ -7,17 +7,13 @@ import java.util.concurrent.locks.Condition;
 public class ConditionHallQueue {
     private final UnboundedQueue<QueuePositionData> waitingQueue = new UnboundedQueue<>();
 
-    public void await(Condition cond) {
-        try {
-            QueuePositionData queuePosition = new QueuePositionData(cond);
-            waitingQueue.enqueue(queuePosition);
-            while (queuePosition.flag) {
-                cond.await();
-            }
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public void await(Condition cond) throws InterruptedException {
+        QueuePositionData queuePosition = new QueuePositionData(cond);
+        waitingQueue.enqueue(queuePosition);
+        while (queuePosition.isFlag()) {
+            cond.await();
         }
+
     }
 
     public void signal() {

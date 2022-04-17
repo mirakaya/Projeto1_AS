@@ -14,12 +14,12 @@ public interface IMDHPatient {
      * @param age Age of the patient.
      * @return The number of the room the patient will occupy.
      */
-    int waitMDRCall(PatientAge age, int wtn);
+    int waitMDRCall(PatientAge age, int wtn) throws InterruptedException;
 
     /**
      * Enter the MDR and wait for the Medical Appointment ot finish.
      * @param age Age of the patient
      * @param room The number of the room the patient will occupy.
      */
-    void waitMDRConcluded(PatientAge age, int wtn, int room);
+    void waitMDRConcluded(PatientAge age, int wtn, int room) throws InterruptedException;
 }

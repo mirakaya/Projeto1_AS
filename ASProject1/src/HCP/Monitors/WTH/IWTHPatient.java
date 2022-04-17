@@ -16,7 +16,7 @@ public interface IWTHPatient {
      * @param age Age of the patient
      * @return The WTN attributed to the patient.
      */
-    int waitWTRFree(PatientAge age);
+    int waitWTRFree(PatientAge age) throws InterruptedException;
 
     /**
      * Method used for the patients to enter a waiting
@@ -25,5 +25,5 @@ public interface IWTHPatient {
      * @param age Age of the patient
      * @param evaluation The evaluation of the patient
      */
-    void waitMDWCall(int wtn, PatientAge age, PatientEvaluation evaluation);
+    void waitMDWCall(int wtn, PatientAge age, PatientEvaluation evaluation) throws InterruptedException;
 }

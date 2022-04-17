@@ -38,7 +38,7 @@ public class WaitingHallSplit {
         freeMDWCounter = mdwCapacity;
     }
 
-    public int waitWTRFree(PatientAge age) {
+    public int waitWTRFree(PatientAge age) throws InterruptedException {
         wtnMonitor.lock();
         int wtn = hallNumber.getNextHallHumber();
         int wtnExitTicket = wtnExitTicker.acquire();
@@ -69,7 +69,7 @@ public class WaitingHallSplit {
     }
 
 
-    public void waitMDWCall(int wtn, PatientAge age, PatientEvaluation evaluation) {
+    public void waitMDWCall(int wtn, PatientAge age, PatientEvaluation evaluation) throws InterruptedException {
         wtrMonitor.lock();
         //System.out.println(age + " Patient with wtn " + wtn + " and evaluation " + evaluation + " entered WTR");
         wthExitTicker.exit();
@@ -86,8 +86,8 @@ public class WaitingHallSplit {
     }
 
 
-    public void informWTRFree(PatientAge age) {
-        wthMonitor.lock();
+    public void informWTRFree(PatientAge age) throws InterruptedException {
+        wthMonitor.lockInterruptibly();
         if (waitingWTHCounter > 0) {
             waitingWTHCounter--;
             orderedWaitWTRCall.signal();
@@ -97,12 +97,12 @@ public class WaitingHallSplit {
     }
 
 
-    public void informMDWFree(PatientAge age) {
-        wtrMonitor.lock();
+    public void informMDWFree(PatientAge age) throws InterruptedException {
+        wtrMonitor.lockInterruptibly();
 
         if (waitingMDWCounter > 0) {
             waitingMDWCounter--;
-            System.out.println(age + " ");
+            // System.out.println(age + " ");
             orderedWaitMDWCall.signal();
         } else
             freeMDWCounter++;

@@ -12,5 +12,5 @@ public interface IMDHCallCenter {
      * there is a free MDR for them
      * @param age Age of the patient
      */
-    void informMDRFree(PatientAge age);
+    void informMDRFree(PatientAge age) throws InterruptedException;
 }

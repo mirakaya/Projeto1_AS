@@ -16,17 +16,17 @@ public class MMedicalHall implements IMDHPatient, IMDHCallCenter {
     }
 
     @Override
-    public int waitMDRCall(PatientAge age, int wtn) {
+    public int waitMDRCall(PatientAge age, int wtn) throws InterruptedException {
         return ageHallSplits.get(age).waitMDRCall(age, wtn);
     }
 
     @Override
-    public void waitMDRConcluded(PatientAge age, int wtn, int room) {
+    public void waitMDRConcluded(PatientAge age, int wtn, int room) throws InterruptedException {
         ageHallSplits.get(age).waitMDRConcluded(age, wtn, room);
     }
 
     @Override
-    public void informMDRFree(PatientAge age) {
+    public void informMDRFree(PatientAge age) throws InterruptedException {
         ageHallSplits.get(age).informMDRFree(age);
     }
 }
