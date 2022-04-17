@@ -1,52 +1,16 @@
 package HCP.Main;
 
-import HCP.Entities.TCallCenter;
-import HCP.Entities.TNurse;
-import HCP.Entities.TPatient;
-import HCP.Enums.PatientAge;
-import HCP.Monitors.CCH.MCCHall;
-import HCP.Monitors.EH.MEntranceHall;
-import HCP.Monitors.EVH.MEvaluationHall;
-import HCP.Monitors.MDH.MMedicalHall;
-import HCP.Monitors.WTH.MWaitingHall;
+import HCP.Monitors.Simulation.Simulation;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        final int nChildPatients = 25;
-        final int nAdultPatients = 25;
-        final int nPatients = nChildPatients + nAdultPatients;
+        Simulation simulation = new Simulation(
+                25, 25, 4,
+                100, 1000, 500,
+                100
+        );
 
-        MCCHall cch = new MCCHall();
-        MEntranceHall eh = new MEntranceHall(4);
-        MEvaluationHall evh = new MEvaluationHall(nPatients, 100);
-        MWaitingHall wth = new MWaitingHall(nChildPatients, nAdultPatients, 2, 1);
-        MMedicalHall mdh = new MMedicalHall(nChildPatients, nAdultPatients, 3000);
-
-        TCallCenter cc = new TCallCenter(eh, cch, wth, mdh);
-        TNurse nurse = new TNurse(evh);
-        TPatient[] childPatients = new TPatient[nChildPatients];
-        TPatient[] adultPatients = new TPatient[nAdultPatients];
-
-        for (int i = 0; i < childPatients.length; i++) {
-            childPatients[i] = new TPatient(eh, cch, evh, wth, mdh, PatientAge.CHILD);
-            adultPatients[i] = new TPatient(eh, cch, evh, wth, mdh, PatientAge.ADULT);
-        }
-
-        cc.start();
-        nurse.start();
-
-        for (int i = 0; i < childPatients.length; i++) {
-            childPatients[i].start();
-            adultPatients[i].start();
-        }
-
-        for (int i = 0; i < childPatients.length; i++) {
-            childPatients[i].join();
-            adultPatients[i].join();
-        }
-      
-        cch.informExit();
-        nurse.join();
-        cc.join();
+        simulation.start();
+        simulation.join();
     }
 }

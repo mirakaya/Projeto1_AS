@@ -10,13 +10,13 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Implementations of the shared region for the Call Center
  */
-public class MCCHall implements ICCHallPatient, ICCHallCallCenter{
+public class MCCHall implements ICCHallPatient, ICCHallCallCenter, ICCHallSimulation{
     private final ReentrantLock monitor = new ReentrantLock();
 
     // Tells whether CC is operating in auto or manual mode
     private boolean isAuto = true;
     // Tells whether an order from CCP was already given
-    private boolean shouldWait = false;
+    private int movementCount = 1;
     // Condition where CC will wait for an order from CCP
     private final Condition waitCC = monitor.newCondition();
 
@@ -28,9 +28,9 @@ public class MCCHall implements ICCHallPatient, ICCHallCallCenter{
     public void waitManualOrder() throws InterruptedException {
         monitor.lockInterruptibly();
 
-        while (!isAuto && shouldWait) waitCC.await();
+        while (!isAuto && movementCount > 1) waitCC.await();
 
-        if (!isAuto) shouldWait = true;
+        if (!isAuto) movementCount--;
 
         monitor.unlock();
     }
@@ -80,10 +80,25 @@ public class MCCHall implements ICCHallPatient, ICCHallCallCenter{
         monitor.unlock();
     }
 
-    // Test code
+    @Override
     public void informExit() {
         monitor.lock();
         callQueue.enqueue(Call.EXIT_CALL);
+        waitCall.signal();
+        monitor.unlock();
+    }
+
+    @Override
+    public void setAuto(boolean isAuto) {
+        monitor.lock();
+        this.isAuto = isAuto;
+        monitor.unlock();
+    }
+
+    @Override
+    public void manualMove() {
+        monitor.lock();
+        movementCount++;
         waitCall.signal();
         monitor.unlock();
     }
