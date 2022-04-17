@@ -6,6 +6,9 @@ public enum SimulationState {
     RESUME,
     STOP,
     END,
+    AUTO,
+    MANUAL,
+
 
 
 }

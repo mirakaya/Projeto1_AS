@@ -280,6 +280,26 @@ public class CCP_GUI {
            public void actionPerformed(ActionEvent actionEvent) {
                AbstractButton aButton = (AbstractButton) actionEvent.getSource();
                System.out.println("Selected: " + aButton.getText());
+
+               if (aButton.getText() == "Auto") {
+                   try {
+                       ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
+                       out.writeObject(SimulationState.AUTO);
+
+                   } catch (IOException ioException) {
+                       ioException.printStackTrace();
+                   }
+               } else {
+                   try {
+                       ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
+                       out.writeObject(SimulationState.MANUAL);
+
+                   } catch (IOException ioException) {
+                       ioException.printStackTrace();
+                   }
+
+               }
+
            }
        };
 

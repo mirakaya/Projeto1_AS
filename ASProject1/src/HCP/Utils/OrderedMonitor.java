@@ -32,10 +32,6 @@ public class OrderedMonitor {
         }
     }
 
-    public int getSize() {
-        return size;
-    }
-
     public void await() {
         try {
             if (count == size) return;

@@ -56,7 +56,7 @@ public class MEvaluationHall implements IEVNurse, IEVPatient {
         monitor.lock();
         try {
             while (occupiedRooms.isEmpty()) {
-                System.out.println("Waiting for patients");
+                //System.out.println("Nurse is waiting for patients");
                 waitPatients.await();
             }
         } catch (InterruptedException e) {
@@ -80,7 +80,7 @@ public class MEvaluationHall implements IEVNurse, IEVPatient {
         evaluations[roomIdx] = evaluation;
         waitEval[roomIdx].signal();
 
-        System.out.println("Evaluating patient at " + roomIdx + " with " + evaluation);
+        //System.out.println("Evaluating patient at " + roomIdx + " with " + evaluation);
         monitor.unlock();
 
         patientsCount++;
@@ -98,7 +98,7 @@ public class MEvaluationHall implements IEVNurse, IEVPatient {
         waitPatients.signal();
 
         try {
-            System.out.println("Patient waiting eval at room " + roomIdx);
+            //System.out.println("Patient waiting eval at room " + roomIdx);
             while(evaluations[roomIdx] == PatientEvaluation.NONE) {
                 room.await();
             }
@@ -111,7 +111,7 @@ public class MEvaluationHall implements IEVNurse, IEVPatient {
         evaluations[roomIdx] = PatientEvaluation.NONE;
         freeRooms.enqueue(roomIdx);
 
-        System.out.println("Patient at room " + roomIdx + " was evaluated with " + evaluation);
+        //System.out.println("Patient at room " + roomIdx + " was evaluated with " + evaluation);
         monitor.unlock();
         return evaluation;
     }

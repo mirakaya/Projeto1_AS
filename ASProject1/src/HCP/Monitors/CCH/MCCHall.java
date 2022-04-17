@@ -1,6 +1,7 @@
 package HCP.Monitors.CCH;
 
 import HCP.Enums.CallCenterCall;
+import HCP.Enums.PatientAge;
 import HCP.Utils.UnboundedQueue;
 
 import java.util.concurrent.locks.Condition;
@@ -20,7 +21,7 @@ public class MCCHall implements ICCHallPatient, ICCHallCallCenter{
     private final Condition waitCC = monitor.newCondition();
 
     // Queue with calls to the call center
-    private final UnboundedQueue<CallCenterCall> callQueue = new UnboundedQueue<>();
+    private final UnboundedQueue<Call> callQueue = new UnboundedQueue<>();
     private final Condition waitCall = monitor.newCondition();
 
     @Override
@@ -40,8 +41,8 @@ public class MCCHall implements ICCHallPatient, ICCHallCallCenter{
     }
 
     @Override
-    public CallCenterCall waitCall() {
-        CallCenterCall nextCall = CallCenterCall.EXIT;
+    public Call waitCall() {
+        Call nextCall = Call.EXIT_CALL;
 
         monitor.lock();
 
@@ -62,15 +63,29 @@ public class MCCHall implements ICCHallPatient, ICCHallCallCenter{
     @Override
     public void informLeftEVHall() {
         monitor.lock();
-        callQueue.enqueue(CallCenterCall.EV_PATIENT_LEFT);
+        callQueue.enqueue(new Call(CallCenterCall.EV_PATIENT_LEFT));
         waitCall.signal();
+        monitor.unlock();
+    }
+
+    @Override
+    public void informLeftWTR(PatientAge age) {
+        monitor.lock();
+        callQueue.enqueue(new Call(CallCenterCall.WTR_PATIENT_LEFT, age));
+        monitor.unlock();
+    }
+
+    @Override
+    public void informLeftMDW(PatientAge age) {
+        monitor.lock();
+        callQueue.enqueue(new Call(CallCenterCall.MDW_PATIENT_LEFT, age));
         monitor.unlock();
     }
 
     // Test code
     public void informExit() {
         monitor.lock();
-        callQueue.enqueue(CallCenterCall.EXIT);
+        callQueue.enqueue(Call.EXIT_CALL);
         waitCall.signal();
         monitor.unlock();
     }
