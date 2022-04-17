@@ -25,35 +25,23 @@ public class MCCHall implements ICCHallPatient, ICCHallCallCenter{
     private final Condition waitCall = monitor.newCondition();
 
     @Override
-    public void waitManualOrder() {
-        monitor.lock();
+    public void waitManualOrder() throws InterruptedException {
+        monitor.lockInterruptibly();
 
-        try {
-            while (!isAuto && shouldWait) waitCC.await();
+        while (!isAuto && shouldWait) waitCC.await();
 
-            if (!isAuto) shouldWait = true;
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        if (!isAuto) shouldWait = true;
 
         monitor.unlock();
     }
 
     @Override
-    public Call waitCall() {
-        Call nextCall = Call.EXIT_CALL;
+    public Call waitCall() throws InterruptedException {
+        Call nextCall;
+        monitor.lockInterruptibly();
 
-        monitor.lock();
-
-        try {
-
-            while (callQueue.isEmpty()) waitCall.await();
-            nextCall = callQueue.dequeue();
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        while (callQueue.isEmpty()) waitCall.await();
+        nextCall = callQueue.dequeue();
 
         monitor.unlock();
 
@@ -61,32 +49,32 @@ public class MCCHall implements ICCHallPatient, ICCHallCallCenter{
     }
 
     @Override
-    public void informLeftEVHall() {
-        monitor.lock();
+    public void informLeftEVHall() throws InterruptedException {
+        monitor.lockInterruptibly();
         callQueue.enqueue(new Call(CallCenterCall.EV_PATIENT_LEFT));
         waitCall.signal();
         monitor.unlock();
     }
 
     @Override
-    public void informLeftWTR(PatientAge age) {
-        monitor.lock();
+    public void informLeftWTR(PatientAge age) throws InterruptedException {
+        monitor.lockInterruptibly();
         callQueue.enqueue(new Call(CallCenterCall.WTR_PATIENT_LEFT, age));
         waitCall.signal();
         monitor.unlock();
     }
 
     @Override
-    public void informLeftMDW(PatientAge age) {
-        monitor.lock();
+    public void informLeftMDW(PatientAge age) throws InterruptedException {
+        monitor.lockInterruptibly();
         callQueue.enqueue(new Call(CallCenterCall.MDW_PATIENT_LEFT, age));
         waitCall.signal();
         monitor.unlock();
     }
 
     @Override
-    public void informLeftMDR(PatientAge age) {
-        monitor.lock();
+    public void informLeftMDR(PatientAge age) throws InterruptedException {
+        monitor.lockInterruptibly();
         callQueue.enqueue(new Call(CallCenterCall.MDR_PATIENT_LEFT, age));
         waitCall.signal();
         monitor.unlock();

@@ -36,6 +36,8 @@ public class TCallCenter extends Thread {
                 cch.waitManualOrder();
                 nextCall = cch.waitCall();
 
+                System.out.println(nextCall);
+
                 switch (nextCall.getType()) {
                     case EV_PATIENT_LEFT -> eh.informEvaluationRoomFree();
                     case WTR_PATIENT_LEFT -> wth.informWTRFree(nextCall.getAge());
