@@ -40,6 +40,7 @@ public class TSimulationRunner {
     private final TPatient[] adultThreads;
     private final TCallCenter callCenterThread;
     private final TNurse nurseThread;
+    private final Thread guiThread;
 
     private final HCP_GUI gui;
     private final MLogger log;
@@ -72,15 +73,18 @@ public class TSimulationRunner {
         this.log = new MLogger(patientsCount);
         this.gui = new HCP_GUI();
 
-        cch = new MCCHall(simulationController);
+        System.out.println("GUI Initialized");
 
+        cch = new MCCHall(simulationController);
         eh = new MEntranceHall(seatCount, simulationController);
         evh = new MEvaluationHall(patientsCount, maxEvaluationDelay, simulationController);
         wth = new MWaitingHall(childCount, adultCount, seatCount / 2, 1, simulationController);
         mdh = new MMedicalHall(childCount, adultCount, maxTreatmentDelay, simulationController);
         pyh = new MPaymentHall(patientsCount, maxPaymentDelay, simulationController);
 
-        callCenterThread = new TCallCenter(eh, cch, wth, mdh);
+        guiThread = new Thread(() -> gui.setVisible(true));
+
+        callCenterThread = new TCallCenter(patientsCount, eh, cch, wth, mdh);
         nurseThread = new TNurse(evh);
         childThreads = new TPatient[childCount];
         adultThreads = new TPatient[adultCount];
@@ -95,6 +99,8 @@ public class TSimulationRunner {
     }
 
     public void start() {
+        guiThread.setDaemon(true);
+        guiThread.start();
 
         callCenterThread.start();
         nurseThread.start();

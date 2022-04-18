@@ -61,10 +61,7 @@ public class HCP_GUI extends JDialog {
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setContentPane(contentPane);
-        System.out.println("Reached here");
         setModal(true);
-
-
         //test
 //        try {
 //            put_patient("ETR1", "C1", "Gray");
@@ -84,9 +81,7 @@ public class HCP_GUI extends JDialog {
 //        } catch (InterruptedException ignored) {}
 
         pack();
-        System.out.println("Reached here too");
-        setVisible(true);
-
+        // setVisible(true);
     }
 
     private void find_remove(String [][] patient_list, String id) {
@@ -105,6 +100,8 @@ public class HCP_GUI extends JDialog {
 
     public void remove_patient(String hall, String id) throws InterruptedException {
         monitor.lockInterruptibly();
+
+        System.out.println(hall + " " + id);
 
         switch(hall) {
             case "BEN":
@@ -197,6 +194,8 @@ public class HCP_GUI extends JDialog {
 
     public void put_patient(String hall, String id, String color) throws InterruptedException{
         monitor.lockInterruptibly();
+
+        System.out.println(hall + " " + id);
 
         switch(hall) {
             case "BEN":
