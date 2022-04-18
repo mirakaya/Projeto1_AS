@@ -14,11 +14,11 @@ import static java.awt.Color.*;
 public class HCP_GUI extends JDialog {
 
     /*
-    *
-    * put_patient -> puts 1 patient in their hall and redraws the GUI
-    * remove_patient -> removes 1 patient from the hall and redraws the GUI
-    *
-    * */
+     *
+     * put_patient -> puts 1 patient in their hall and redraws the GUI
+     * remove_patient -> removes 1 patient from the hall and redraws the GUI
+     *
+     * */
 
     private JPanel contentPane;
     private JPanel hospital;
@@ -60,12 +60,21 @@ public class HCP_GUI extends JDialog {
 
 
 
-    public HCP_GUI(){
 
+
+
+    public HCP_GUI(){
+        setVisible(true);
         setContentPane(contentPane);
         setModal(true);
         pack();
-        setVisible(true);
+
+
+
+
+
+        //
+
 
 
         //draw rooms with fixed professionals (doctors)
@@ -91,6 +100,8 @@ public class HCP_GUI extends JDialog {
 
         remove_patient("ETR1", "C1");*/
 
+        System.out.println("Not all lost");
+
         try {
             receiveObjects();
         } catch (IOException e) {
@@ -101,29 +112,31 @@ public class HCP_GUI extends JDialog {
 
     }
 
-    private void receiveObjects() throws IOException, ClassNotFoundException {
+    public void receiveObjects() throws IOException, ClassNotFoundException {
 
-        int port = 6060;
+        System.out.println("Bazongas");
+
+        int port = 8765;
         ServerSocket ss = new ServerSocket(port);
 
         Socket socket = ss.accept();
         ObjectInputStream is;
 
         while (true) {
-            System.out.println("Server Connected");
+            System.out.println("Server Connected HCP");
             is = new ObjectInputStream(socket.getInputStream());
-            String[] obj = (String[]) is.readObject();
-            System.out.println("Obj received - " + obj);
+            Object[] obj = (Object[]) is.readObject();
+            System.out.println("Obj received woooooooo - " + obj);
 
             //Obj will be an array with all the info needed
 
 
 
             if (obj[0] == HCPOrders.DELETE.toString()){
-                remove_patient(obj[1], obj[2]);
+                remove_patient(obj[1].toString(), obj[2].toString());
 
             } else if (obj[0] == HCPOrders.CREATE.toString()){
-                put_patient(obj[1], obj[2], obj[3]);
+                put_patient(obj[1].toString(), obj[2].toString(), obj[3].toString());
 
 
             }
@@ -337,33 +350,33 @@ public class HCP_GUI extends JDialog {
         }else if (list == patients_ETR1) {
             erase_and_draw(ETR1, patients_ETR1);
         }else if (list == patients_ETR2) {
-                erase_and_draw(ETR2, patients_ETR2);
+            erase_and_draw(ETR2, patients_ETR2);
         }else if (list == patients_EVR1) {
-                erase_and_draw(EVR1, patients_EVR1);
+            erase_and_draw(EVR1, patients_EVR1);
         }else if (list == patients_EVR2) {
-                erase_and_draw(EVR2, patients_EVR2);
+            erase_and_draw(EVR2, patients_EVR2);
         }else if (list == patients_EVR3) {
-                erase_and_draw(EVR3, patients_EVR3);
+            erase_and_draw(EVR3, patients_EVR3);
         }else if (list == patients_EVR4) {
-                erase_and_draw(EVR4, patients_EVR4);
+            erase_and_draw(EVR4, patients_EVR4);
         }else if (list == patients_WTH1) {
-                erase_and_draw(WTH1, patients_WTH1);
+            erase_and_draw(WTH1, patients_WTH1);
         }else if (list == patients_WTH2) {
-                erase_and_draw(WTH2, patients_WTH2);
+            erase_and_draw(WTH2, patients_WTH2);
         }else if (list == patients_MDW) {
-                erase_and_draw(MDW, patients_MDW);
+            erase_and_draw(MDW, patients_MDW);
         }else if (list == patients_MDR1) {
-                erase_and_draw(MDR1, patients_MDR1);
-                doctor = new String[]{"Doctor MDR1", " "};
-                draw_human(MDR1, doctor);
+            erase_and_draw(MDR1, patients_MDR1);
+            doctor = new String[]{"Doctor MDR1", " "};
+            draw_human(MDR1, doctor);
         }else if (list == patients_MDR2) {
-                erase_and_draw(MDR2, patients_MDR2);
-                doctor = new String[]{"Doctor MDR2", " "};
-                draw_human(MDR2, doctor);
+            erase_and_draw(MDR2, patients_MDR2);
+            doctor = new String[]{"Doctor MDR2", " "};
+            draw_human(MDR2, doctor);
         }else if (list == patients_MDR3) {
-                erase_and_draw(MDR3, patients_MDR3);
-                doctor = new String[]{"Doctor MDR3", " "};
-                draw_human(MDR3, doctor);
+            erase_and_draw(MDR3, patients_MDR3);
+            doctor = new String[]{"Doctor MDR3", " "};
+            draw_human(MDR3, doctor);
         }else if (list == patients_MDR4) {
             erase_and_draw(MDR4, patients_MDR4);
             doctor = new String[]{"Doctor MDR4", " "};

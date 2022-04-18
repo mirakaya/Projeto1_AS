@@ -1,6 +1,8 @@
 package HCP.Enums;
 
 public enum AvailableHalls {
+    BEN,
+
     STT,
     ETH,
     ET1,
@@ -17,7 +19,9 @@ public enum AvailableHalls {
     MDR2,
     MDR3,
     MDR4,
-    PYH
+    PYH,
+    AEX,
+
 
 
 }

@@ -53,7 +53,7 @@ public class MLogger implements ILogger{
         }
 
 
-        System.out.println("me");
+        //System.out.println("me");
 
         monitor.unlock();
     }
@@ -80,7 +80,7 @@ public class MLogger implements ILogger{
 
     //writes 1 line of the log given the info to write (id) and the room
     @Override
-    public void createContent(int id, AvailableHalls room) {
+    public void createContent(String id, AvailableHalls room) {
 
         monitor.lock();
 
@@ -97,7 +97,7 @@ public class MLogger implements ILogger{
 
             if (room == states[pos]){
 
-                System.out.println("yes" + entered);
+               // System.out.println("yes" + entered);
 
                 content += " " + id;
 

@@ -10,5 +10,5 @@ public interface ILogger {
     void writeInfo();
 
     //writes 1 line of the log given the info to write (id) and the room
-    void createContent(int id, AvailableHalls room);
+    void createContent(String id, AvailableHalls room);
 }

@@ -11,6 +11,8 @@ import HCP.Monitors.EVH.MEvaluationHall;
 import HCP.Monitors.MDH.MMedicalHall;
 import HCP.Monitors.MLogger;
 import HCP.Monitors.PYH.MPaymentHall;
+import HCP.Monitors.SendToHCP_GUI.ISendToHCP_GUI;
+import HCP.Monitors.SendToHCP_GUI.MSendToHCP_GUI;
 import HCP.Monitors.WTH.MWaitingHall;
 
 /**
@@ -29,6 +31,8 @@ public class Simulation {
     private final int maxPaymentDelay;
     private final int maxTimeToMove;
 
+    private final MSendToHCP_GUI sendToHCP_gui;
+
     private final MCCHall cch;
     private final MEntranceHall eh;
     private final MEvaluationHall evh;
@@ -41,7 +45,7 @@ public class Simulation {
     private final TCallCenter callCenterThread;
     private final TNurse nurseThread;
 
-    private final int sendToHCPport;
+
 
     private final MLogger log;
 
@@ -56,7 +60,7 @@ public class Simulation {
     public Simulation(
             int childCount, int adultCount, int seatCount,
             int maxEvaluationDelay, int maxTreatmentDelay,
-            int maxPaymentDelay, int maxTimeToMove
+            int maxPaymentDelay, int maxTimeToMove, MLogger log
     ) {
         this.childCount = childCount;
         this.adultCount = adultCount;
@@ -66,13 +70,12 @@ public class Simulation {
         this.maxPaymentDelay = maxPaymentDelay;
         this.maxTimeToMove = maxTimeToMove;
 
-        this.sendToHCPport = 6060;
 
 
 
 
         patientsCount = childCount + adultCount;
-        this.log = new MLogger(patientsCount);
+        this.log = log;
         cch = new MCCHall();
 
 
@@ -88,16 +91,22 @@ public class Simulation {
         childThreads = new TPatient[childCount];
         adultThreads = new TPatient[adultCount];
 
+        THCPStarter thcpStarter = new THCPStarter();
+        thcpStarter.start();
+
+
+
+        this.sendToHCP_gui = new MSendToHCP_GUI();
+
         for (int i = 0; i < childCount; i++) {
-            childThreads[i] = new TPatient(eh, cch, evh, wth, mdh, pyh, PatientAge.CHILD,log , sendToHCPport);
+            childThreads[i] = new TPatient(eh, cch, evh, wth, mdh, pyh, PatientAge.CHILD,log , sendToHCP_gui);
         }
 
         for (int i = 0; i < adultCount; i++) {
-            adultThreads[i] = new TPatient(eh, cch, evh, wth, mdh, pyh, PatientAge.ADULT, log , sendToHCPport);
+            adultThreads[i] = new TPatient(eh, cch, evh, wth, mdh, pyh, PatientAge.ADULT, log , sendToHCP_gui);
         }
 
-        THCPStarter thcpStarter = new THCPStarter();
-        thcpStarter.start();
+
 
 
     }

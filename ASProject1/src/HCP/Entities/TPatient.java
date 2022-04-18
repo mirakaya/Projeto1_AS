@@ -10,6 +10,8 @@ import HCP.Monitors.EVH.IEVPatient;
 import HCP.Monitors.MDH.IMDHPatient;
 import HCP.Monitors.MLogger;
 import HCP.Monitors.PYH.IPYPatient;
+import HCP.Monitors.SendToHCP_GUI.ISendToHCP_GUI;
+import HCP.Monitors.SendToHCP_GUI.MSendToHCP_GUI;
 import HCP.Monitors.WTH.IWTHPatient;
 
 import java.io.IOException;
@@ -34,13 +36,15 @@ public class TPatient extends Thread {
 
     private final MLogger log;
 
-    private final int sendToHCPport;
+    //private final int sendToHCPport;
+
+    private final MSendToHCP_GUI sendToHCP_gui;
 
     public TPatient(
             IEntranceHallPatient eh, ICCHallPatient cch,
             IEVPatient evh, IWTHPatient wth,
             IMDHPatient mdh, IPYPatient pyh,
-            PatientAge age, MLogger log, int sendToHCP
+            PatientAge age, MLogger log, MSendToHCP_GUI sendToHCP_gui
     ) {
         this.age = age;
         this.eh = eh;
@@ -50,7 +54,7 @@ public class TPatient extends Thread {
         this.mdh = mdh;
         this.pyh = pyh;
         this.log = log;
-        this.sendToHCPport = sendToHCP;
+        this.sendToHCP_gui = sendToHCP_gui;
 
         setDaemon(true);
     }
@@ -58,6 +62,16 @@ public class TPatient extends Thread {
     @Override
     public void run() {
         try {
+            String idWAge;
+
+
+            if (age == PatientAge.ADULT){
+                idWAge = "A" + id;
+            } else {
+                idWAge = "C" + id;
+            }
+
+            sendToHCP_gui.createRequest(HCPOrders.CREATE, idWAge, AvailableHalls.BEN, PatientEvaluation.NONE);
 
             /*Socket s = null;
             try {
@@ -68,24 +82,50 @@ public class TPatient extends Thread {
 
 
             eh.waitFreeRoom(id, age);
-            log.createContent(id, AvailableHalls.ETH);
+            log.createContent(idWAge, AvailableHalls.ETH);
+            sendToHCP_gui.createRequest(HCPOrders.DELETE, idWAge, AvailableHalls.BEN, PatientEvaluation.NONE);
+            sendToHCP_gui.createRequest(HCPOrders.CREATE, idWAge, AvailableHalls.ETH, PatientEvaluation.NONE);
 
             ObjectOutputStream out = null;
-            /*try {
-                out = new ObjectOutputStream(s.getOutputStream());
-                Object[] orderHCP = {HCPOrders.CREATE, id, AvailableHalls.ETH, PatientEvaluation.NONE};
-                out.writeObject(orderHCP);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }*/
+
 
             eh.waitEvaluationHallCall(age);
             eh.awakeWaitingPatient(age);
-            //TODO: missing room ET
-            PatientEvaluation evaluation = evh.waitEvaluation();
+
+            Object[] result = evh.waitEvaluation();
+            PatientEvaluation evaluation = (PatientEvaluation) result[0];
+            int room = (int) result[1];
+
+            AvailableHalls roomChosen;
+
+            switch (room){
+                case 1:
+                    roomChosen = AvailableHalls.EVR1;
+                    break;
+                case 2:
+                    roomChosen = AvailableHalls.EVR2;
+                    break;
+                case 3:
+                    roomChosen = AvailableHalls.EVR3;
+                    break;
+                case 4:
+                    roomChosen = AvailableHalls.EVR4;
+                    break;
+                default:
+                    roomChosen = AvailableHalls.EVR1;
+                    break;
+
+            }
+
+            log.createContent(idWAge, roomChosen);
+            sendToHCP_gui.createRequest(HCPOrders.DELETE, idWAge, AvailableHalls.ETH, evaluation);
+            sendToHCP_gui.createRequest(HCPOrders.CREATE, idWAge, roomChosen, evaluation);
+
             cch.informLeftEVHall();
 
-            log.createContent(id, AvailableHalls.WTH);
+            log.createContent(idWAge, AvailableHalls.WTH);
+            sendToHCP_gui.createRequest(HCPOrders.DELETE, idWAge, roomChosen, evaluation);
+            sendToHCP_gui.createRequest(HCPOrders.CREATE, idWAge, AvailableHalls.WTH, evaluation);
             int wtn = wth.waitWTRFree(age);
 
             AvailableHalls wtnChoosen;
@@ -100,11 +140,18 @@ public class TPatient extends Thread {
                     wtnChoosen = AvailableHalls.WTR1;
             }
 
-            log.createContent(id, wtnChoosen);
+            log.createContent(idWAge, wtnChoosen);
+            sendToHCP_gui.createRequest(HCPOrders.DELETE, idWAge, AvailableHalls.WTH, evaluation);
+            sendToHCP_gui.createRequest(HCPOrders.CREATE, idWAge, wtnChoosen, evaluation);
+
+
             cch.informLeftWTR(age);
             wth.waitMDWCall(wtn, age,evaluation);
 
-            log.createContent(id, AvailableHalls.MDH);
+            log.createContent(idWAge, AvailableHalls.MDH);
+            sendToHCP_gui.createRequest(HCPOrders.DELETE, idWAge, wtnChoosen,evaluation);
+            sendToHCP_gui.createRequest(HCPOrders.CREATE, idWAge, AvailableHalls.MDH, evaluation);
+
             int mdhRoom = mdh.waitMDRCall(age, wtn);
             AvailableHalls mdhRoomChoosen;
             switch (mdhRoom){
@@ -127,12 +174,16 @@ public class TPatient extends Thread {
             }
 
 
-            log.createContent(id, mdhRoomChoosen);
+            log.createContent(idWAge, mdhRoomChoosen);
+            sendToHCP_gui.createRequest(HCPOrders.DELETE, idWAge, AvailableHalls.MDH, evaluation);
+            sendToHCP_gui.createRequest(HCPOrders.CREATE, idWAge, mdhRoomChoosen, evaluation);
             cch.informLeftMDW(age);
             mdh.waitMDRConcluded(age, wtn, mdhRoom);
             cch.informLeftMDR(age);
 
-            log.createContent(id, AvailableHalls.PYH);
+            log.createContent(idWAge, AvailableHalls.PYH);
+            sendToHCP_gui.createRequest(HCPOrders.DELETE, idWAge, mdhRoomChoosen, evaluation);
+            sendToHCP_gui.createRequest(HCPOrders.CREATE, idWAge, AvailableHalls.PYH, evaluation);
             pyh.waitPayment(id);
 
             System.out.println("me");

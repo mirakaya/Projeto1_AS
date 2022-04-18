@@ -1,7 +1,13 @@
 package HCP.Main;
 
 import HCP.Entities.TSimStarter;
+import HCP.Enums.AvailableHalls;
+import HCP.Enums.HCPOrders;
+import HCP.Enums.PatientEvaluation;
 import HCP.Enums.SimulationState;
+import HCP.Monitors.MLogger;
+import HCP.Monitors.SendToHCP_GUI.ISendToHCP_GUI;
+import HCP.Monitors.SendToHCP_GUI.MSendToHCP_GUI;
 import HCP.Monitors.Simulation.Simulation;
 
 import java.io.IOException;
@@ -9,8 +15,15 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+
+
 public class Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
+
+
+
+
+        MLogger log = null;
 
         int port = 8080;
         ServerSocket ss = new ServerSocket(port);
@@ -27,21 +40,22 @@ public class Main {
 
             if (first_cycle == true) {
 
+                int [] data = (int[]) obj;
+
                 first_cycle = false;
-                TSimStarter simStarter = new TSimStarter((int[]) obj);
+                log = new MLogger(data[0] + data[1]);
+
+                TSimStarter simStarter = new TSimStarter(data, log);
                 simStarter.start();
 
             } else {
-                receiveState((SimulationState) obj );
+                SimulationState stateSimulation = (SimulationState) obj;
+                log.createContent( stateSimulation.toString(), AvailableHalls.STT);
 
             }
 
         }
 
-    }
-
-    private static void receiveState(SimulationState obj) {
-        SimulationState stateSimulation = obj;
     }
 
 

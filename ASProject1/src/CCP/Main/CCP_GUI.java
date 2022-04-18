@@ -65,6 +65,7 @@ public class CCP_GUI {
 
         BuildGUI();
 
+        //8080 to receive, 9090 to send
         try {
             s = new Socket("127.0.0.1", 8080);
         } catch (IOException e) {
