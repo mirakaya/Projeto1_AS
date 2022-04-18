@@ -1,7 +1,8 @@
-package CCP.Main;
+package Main;
 
 import HCP.Enums.SimulationState;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,7 +11,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import javax.swing.*;
 
 import static java.lang.Integer.parseInt;
 
@@ -65,7 +65,6 @@ public class CCP_GUI {
 
         BuildGUI();
 
-        //8080 to receive, 9090 to send
         try {
             s = new Socket("127.0.0.1", 8080);
         } catch (IOException e) {

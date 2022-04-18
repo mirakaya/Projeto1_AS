@@ -87,7 +87,7 @@ public class MEvaluationHall implements IEVNurse, IEVPatient {
     }
 
     @Override
-    public PatientEvaluation waitEvaluation() {
+    public Object[] waitEvaluation() {
         PatientEvaluation evaluation;
 
         monitor.lock();
@@ -113,6 +113,9 @@ public class MEvaluationHall implements IEVNurse, IEVPatient {
 
         //System.out.println("Patient at room " + roomIdx + " was evaluated with " + evaluation);
         monitor.unlock();
-        return evaluation;
+
+        Object [] result = {evaluation, roomIdx};
+
+        return result;
     }
 }

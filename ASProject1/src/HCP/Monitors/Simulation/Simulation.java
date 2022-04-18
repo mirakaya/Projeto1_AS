@@ -1,6 +1,7 @@
 package HCP.Monitors.Simulation;
 
 import HCP.Entities.TCallCenter;
+import HCP.Entities.THCPStarter;
 import HCP.Entities.TNurse;
 import HCP.Entities.TPatient;
 import HCP.Enums.PatientAge;
@@ -8,7 +9,10 @@ import HCP.Monitors.CCH.MCCHall;
 import HCP.Monitors.EH.MEntranceHall;
 import HCP.Monitors.EVH.MEvaluationHall;
 import HCP.Monitors.MDH.MMedicalHall;
+import HCP.Monitors.MLogger;
 import HCP.Monitors.PYH.MPaymentHall;
+import HCP.Monitors.SendToHCP_GUI.ISendToHCP_GUI;
+import HCP.Monitors.SendToHCP_GUI.MSendToHCP_GUI;
 import HCP.Monitors.WTH.MWaitingHall;
 
 /**
@@ -27,6 +31,8 @@ public class Simulation {
     private final int maxPaymentDelay;
     private final int maxTimeToMove;
 
+    //private final MSendToHCP_GUI sendToHCP_gui;
+
     private final MCCHall cch;
     private final MEntranceHall eh;
     private final MEvaluationHall evh;
@@ -39,6 +45,10 @@ public class Simulation {
     private final TCallCenter callCenterThread;
     private final TNurse nurseThread;
 
+
+
+    private final MLogger log;
+
     /**
      * Creates a simulation.
      * @param childCount Number of children patients
@@ -50,7 +60,7 @@ public class Simulation {
     public Simulation(
             int childCount, int adultCount, int seatCount,
             int maxEvaluationDelay, int maxTreatmentDelay,
-            int maxPaymentDelay, int maxTimeToMove
+            int maxPaymentDelay, int maxTimeToMove, MLogger log
     ) {
         this.childCount = childCount;
         this.adultCount = adultCount;
@@ -60,9 +70,16 @@ public class Simulation {
         this.maxPaymentDelay = maxPaymentDelay;
         this.maxTimeToMove = maxTimeToMove;
 
-        patientsCount = childCount + adultCount;
 
+
+
+
+        patientsCount = childCount + adultCount;
+        this.log = log;
         cch = new MCCHall();
+
+
+        //TODO: is it really 4?
         eh = new MEntranceHall(4);
         evh = new MEvaluationHall(patientsCount, maxEvaluationDelay);
         wth = new MWaitingHall(childCount, adultCount, seatCount / 2, 1);
@@ -74,16 +91,28 @@ public class Simulation {
         childThreads = new TPatient[childCount];
         adultThreads = new TPatient[adultCount];
 
+        //THCPStarter thcpStarter = new THCPStarter();
+        //thcpStarter.start();
+
+
+
+        //this.sendToHCP_gui = new MSendToHCP_GUI();
+
         for (int i = 0; i < childCount; i++) {
-            childThreads[i] = new TPatient(eh, cch, evh, wth, mdh, pyh, PatientAge.CHILD);
+            childThreads[i] = new TPatient(eh, cch, evh, wth, mdh, pyh, PatientAge.CHILD,log /*, sendToHCP_gui*/);
         }
 
         for (int i = 0; i < adultCount; i++) {
-            adultThreads[i] = new TPatient(eh, cch, evh, wth, mdh, pyh, PatientAge.ADULT);
+            adultThreads[i] = new TPatient(eh, cch, evh, wth, mdh, pyh, PatientAge.ADULT, log  /*,sendToHCP_gui*/);
         }
+
+
+
+
     }
 
     public void start() {
+
         callCenterThread.start();
         nurseThread.start();
 
@@ -94,6 +123,8 @@ public class Simulation {
         for (int i = 0; i < adultCount; i++) {
             adultThreads[i].start();
         }
+
+
     }
 
     public void join() throws InterruptedException {
