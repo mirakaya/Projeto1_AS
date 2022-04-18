@@ -10,5 +10,5 @@ public interface IEVPatient {
      *
      * @return The evaluation given by the nurse
      */
-    Object[] waitEvaluation();
+    Object[] waitEvaluation() throws InterruptedException;
 }

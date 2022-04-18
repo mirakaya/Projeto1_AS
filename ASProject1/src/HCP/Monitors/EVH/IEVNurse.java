@@ -16,10 +16,10 @@ public interface IEVNurse {
      * Method used to wait for the arrival of patients.
      * Returns immediately if there are patients already waiting.
      */
-    void waitPatients();
+    void waitPatients() throws InterruptedException;
 
     /**
      * Evaluates a patient, taking a certain amount of time to do so.
      */
-    void evaluateNextPatient();
+    void evaluateNextPatient() throws InterruptedException;
 }

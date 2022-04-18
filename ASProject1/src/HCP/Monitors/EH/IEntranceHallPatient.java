@@ -15,7 +15,7 @@ public interface IEntranceHallPatient {
      * @param patientId Id of the patient for logging purposes
      * @param age Age of the patient
      */
-    void waitFreeRoom(int patientId, PatientAge age);
+    void waitFreeRoom(int patientId, PatientAge age) throws InterruptedException;
 
     /**
      * Patient calls the method to enter the entrance hall
@@ -23,11 +23,11 @@ public interface IEntranceHallPatient {
      * patients waiting here will leave by entrance order.
      * @param age Age of the patient
      */
-    void waitEvaluationHallCall(PatientAge age);
+    void waitEvaluationHallCall(PatientAge age) throws InterruptedException;
 
     /**
      * Awakes one of the patients waiting to enter the entrance hall
      * @param age Age of the patient to awake
      */
-    void awakeWaitingPatient(PatientAge age);
+    void awakeWaitingPatient(PatientAge age) throws InterruptedException;
 }

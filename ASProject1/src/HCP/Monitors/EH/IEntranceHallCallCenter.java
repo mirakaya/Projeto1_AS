@@ -9,5 +9,5 @@ public interface IEntranceHallCallCenter {
      * Informs the Patient that entered first that
      * there is a free room in the Evaluation Hall
      */
-    void informEvaluationRoomFree();
+    void informEvaluationRoomFree() throws InterruptedException;
 }

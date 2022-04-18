@@ -37,20 +37,16 @@ public class MEntranceHall implements IEntranceHallCallCenter, IEntranceHallPati
     }
 
     @Override
-    public void waitFreeRoom(int patientId, PatientAge age) {
-        monitor.lock();
+    public void waitFreeRoom(int patientId, PatientAge age) throws InterruptedException {
+        monitor.lockInterruptibly();
 
         final Condition waitFreeSeat = waitFreeSeats.get(age);
 
-        try {
-            while (counter.reachedLimit(age)) {
-                // Test code
-                //System.out.println(age + " patient is waiting for free rooms in eth");
-                // End of test code
-                waitFreeSeat.await();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while (counter.reachedLimit(age)) {
+            // Test code
+            //System.out.println(age + " patient is waiting for free rooms in eth");
+            // End of test code
+            waitFreeSeat.await();
         }
 
         counter.increment(age);
@@ -59,8 +55,8 @@ public class MEntranceHall implements IEntranceHallCallCenter, IEntranceHallPati
     }
 
     @Override
-    public void waitEvaluationHallCall(PatientAge age) {
-        monitor.lock();
+    public void waitEvaluationHallCall(PatientAge age) throws InterruptedException {
+        monitor.lockInterruptibly();
 
         final int ethNumber = ethNumberCounter++;
         final OrderedMonitor room = rooms.get(age);
@@ -85,15 +81,15 @@ public class MEntranceHall implements IEntranceHallCallCenter, IEntranceHallPati
     }
 
     @Override
-    public void awakeWaitingPatient(PatientAge age) {
-        monitor.lock();
+    public void awakeWaitingPatient(PatientAge age) throws InterruptedException {
+        monitor.lockInterruptibly();
         waitFreeSeats.get(age).signal();
         monitor.unlock();
     }
 
     @Override
-    public void informEvaluationRoomFree() {
-        monitor.lock();
+    public void informEvaluationRoomFree() throws InterruptedException {
+        monitor.lockInterruptibly();
         if (!ageQueue.isEmpty()) {
             PatientAge age = ageQueue.dequeue();
             rooms.get(age).awake();

@@ -16,9 +16,11 @@ public class TNurse extends Thread {
 
     @Override
     public void run() {
-        while(evh.anyPatientsLeft()) {
-            evh.waitPatients();
-            evh.evaluateNextPatient();
-        }
+        try {
+            while(evh.anyPatientsLeft()) {
+                evh.waitPatients();
+                evh.evaluateNextPatient();
+            }
+        } catch (InterruptedException ignored) {}
     }
 }

@@ -52,29 +52,23 @@ public class MEvaluationHall implements IEVNurse, IEVPatient {
     }
 
     @Override
-    public void waitPatients() {
-        monitor.lock();
-        try {
-            while (occupiedRooms.isEmpty()) {
-                //System.out.println("Nurse is waiting for patients");
-                waitPatients.await();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public void waitPatients() throws InterruptedException {
+        monitor.lockInterruptibly();
+        while (occupiedRooms.isEmpty()) {
+            //System.out.println("Nurse is waiting for patients");
+            waitPatients.await();
         }
         monitor.unlock();
     }
 
     @Override
-    public void evaluateNextPatient() {
-        try {
-            TimeUnit.MILLISECONDS.sleep(evalTime);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void evaluateNextPatient() throws InterruptedException {
+
+        TimeUnit.MILLISECONDS.sleep(evalTime);
+
         final PatientEvaluation evaluation = PatientEvaluation.random();
 
-        monitor.lock();
+        monitor.lockInterruptibly();
         final int roomIdx = occupiedRooms.dequeue();
 
         evaluations[roomIdx] = evaluation;
@@ -87,23 +81,18 @@ public class MEvaluationHall implements IEVNurse, IEVPatient {
     }
 
     @Override
-    public Object[] waitEvaluation() {
+    public Object[] waitEvaluation() throws InterruptedException {
         PatientEvaluation evaluation;
 
-        monitor.lock();
+        monitor.lockInterruptibly();
 
         int roomIdx = freeRooms.dequeue();
         Condition room = waitEval[roomIdx];
         occupiedRooms.enqueue(roomIdx);
         waitPatients.signal();
 
-        try {
-            //System.out.println("Patient waiting eval at room " + roomIdx);
-            while(evaluations[roomIdx] == PatientEvaluation.NONE) {
-                room.await();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while(evaluations[roomIdx] == PatientEvaluation.NONE) {
+            room.await();
         }
 
 
@@ -114,8 +103,6 @@ public class MEvaluationHall implements IEVNurse, IEVPatient {
         //System.out.println("Patient at room " + roomIdx + " was evaluated with " + evaluation);
         monitor.unlock();
 
-        Object [] result = {evaluation, roomIdx};
-
-        return result;
+        return new Object[]{evaluation, roomIdx};
     }
 }
