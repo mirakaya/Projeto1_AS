@@ -33,6 +33,8 @@ public class Simulation {
 
     //private final MSendToHCP_GUI sendToHCP_gui;
 
+    private ISCSimulation simulationController;
+
     private final MCCHall cch;
     private final MEntranceHall eh;
     private final MEvaluationHall evh;
@@ -70,14 +72,13 @@ public class Simulation {
         this.maxPaymentDelay = maxPaymentDelay;
         this.maxTimeToMove = maxTimeToMove;
 
-
-
-
+        MSimulationController simulationController = new MSimulationController();
+        this.simulationController = simulationController;
 
         patientsCount = childCount + adultCount;
         this.log = log;
-        cch = new MCCHall();
 
+        cch = new MCCHall();
 
         //TODO: is it really 4?
         eh = new MEntranceHall(4);
@@ -144,11 +145,11 @@ public class Simulation {
     }
 
     public void pause() {
-
+        simulationController.pause();
     }
 
     public void resume() {
-
+        simulationController.resume();
     }
 
     public void stop() {
