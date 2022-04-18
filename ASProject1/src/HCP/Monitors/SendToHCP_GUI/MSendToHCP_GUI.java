@@ -19,7 +19,7 @@ public class MSendToHCP_GUI implements ISendToHCP_GUI{
     public MSendToHCP_GUI() {
 
         try {
-            s = new Socket("127.0.0.1", 8765);
+            s = new Socket("127.0.0.1", 99999);
             s.setKeepAlive(true);
         } catch (IOException e) {
             e.printStackTrace();

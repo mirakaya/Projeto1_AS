@@ -64,16 +64,15 @@ public class HCP_GUI extends JDialog {
 
 
     public HCP_GUI()  {
+
+
         setContentPane(contentPane);
         setModal(true);
-
-        THCPStarter rec = new THCPStarter();
-        rec.start();
 
 
 
         //test
-        put_patient("ETR1", "C1", "Gray");
+        /*put_patient("ETR1", "C1", "Gray");
         put_patient("ETR2", "A4", "Gray");
         put_patient("ETR1", "C2", "Yellow");
         put_patient("BEN", "A1", "Gray");
@@ -86,21 +85,27 @@ public class HCP_GUI extends JDialog {
 
         put_patient("PYH", "Cashier PYH", "");
 
-        remove_patient("ETR1", "C1");
+        remove_patient("ETR1", "C1");*/
+
         pack();
+        //THCPStarter rec = new THCPStarter();
+        //rec.start();
         setVisible(true);
+
+        System.exit(0);
 
 
     }
 
     public void receiveObjects() throws IOException, ClassNotFoundException {
 
-        ServerSocket ss = new ServerSocket(8765);
+        ServerSocket ss = new ServerSocket(99999);
         Socket socket = ss.accept();
         ObjectInputStream is;
 
         while (true) {
-            System.out.println("Server Connected");
+
+            System.out.println("Server Connected HCP wooo");
             is = new ObjectInputStream(socket.getInputStream());
             Object obj = (Object) is.readObject();
             System.out.println("Obj - " + obj);
@@ -195,7 +200,7 @@ public class HCP_GUI extends JDialog {
 
     }
 
-    private void add_patient_to_list (String [][] patients_list, String id, String color){ //TODO: rename
+    private void add_patient_to_list (String [][] patients_list, String id, String color){
 
         Boolean bool_patient_added = false;
 

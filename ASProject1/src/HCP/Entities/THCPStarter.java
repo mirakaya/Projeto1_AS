@@ -11,7 +11,7 @@ import java.io.IOException;
      */
     public class THCPStarter extends Thread {
 
-
+        HCP_GUI hcp_gui = new HCP_GUI();
         public THCPStarter() {
 
             setDaemon(true);
@@ -20,8 +20,9 @@ import java.io.IOException;
         @Override
         public void run() {
 
-                HCP_GUI hcp_gui = new HCP_GUI();
+
             try {
+                System.out.println("kante");
                 hcp_gui.receiveObjects();
             } catch (IOException e) {
                 throw new RuntimeException(e);

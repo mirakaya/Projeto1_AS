@@ -31,7 +31,7 @@ public class Simulation {
     private final int maxPaymentDelay;
     private final int maxTimeToMove;
 
-    private final MSendToHCP_GUI sendToHCP_gui;
+    //private final MSendToHCP_GUI sendToHCP_gui;
 
     private final MCCHall cch;
     private final MEntranceHall eh;
@@ -91,19 +91,19 @@ public class Simulation {
         childThreads = new TPatient[childCount];
         adultThreads = new TPatient[adultCount];
 
-        THCPStarter thcpStarter = new THCPStarter();
-        thcpStarter.start();
+        //THCPStarter thcpStarter = new THCPStarter();
+        //thcpStarter.start();
 
 
 
-        this.sendToHCP_gui = new MSendToHCP_GUI();
+        //this.sendToHCP_gui = new MSendToHCP_GUI();
 
         for (int i = 0; i < childCount; i++) {
-            childThreads[i] = new TPatient(eh, cch, evh, wth, mdh, pyh, PatientAge.CHILD,log , sendToHCP_gui);
+            childThreads[i] = new TPatient(eh, cch, evh, wth, mdh, pyh, PatientAge.CHILD,log /*, sendToHCP_gui*/);
         }
 
         for (int i = 0; i < adultCount; i++) {
-            adultThreads[i] = new TPatient(eh, cch, evh, wth, mdh, pyh, PatientAge.ADULT, log , sendToHCP_gui);
+            adultThreads[i] = new TPatient(eh, cch, evh, wth, mdh, pyh, PatientAge.ADULT, log  /*,sendToHCP_gui*/);
         }
 
 

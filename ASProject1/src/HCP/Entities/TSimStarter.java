@@ -28,12 +28,8 @@ public class TSimStarter extends Thread {
                 data[3], data[4], data[5],
                 data[6], log
         );
-        System.out.println("here bishes");
-
 
         simulation.start();
-
-        System.out.println("here 2");
 
 
         try {
