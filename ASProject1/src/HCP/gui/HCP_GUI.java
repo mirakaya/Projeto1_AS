@@ -1,17 +1,9 @@
 package HCP.gui;
 
-import HCP.Entities.THCPStarter;
-import HCP.gui.Circle;
-import HCP.gui.Triangle;
-import HCP.gui.Rectangle;
-
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static java.awt.Color.*;
 
@@ -60,57 +52,42 @@ public class HCP_GUI extends JDialog {
     private static String[][] patients_b_entering = new String[50][2];
     private static String[][] patients_a_exiting = new String[50][2];
 
-
+    // Monitor to guard concurrent access to the gui by the different threads
+    private final ReentrantLock monitor = new ReentrantLock();
 
 
     public HCP_GUI()  {
 
-
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setContentPane(contentPane);
         setModal(true);
 
 
 
         //test
-        /*put_patient("ETR1", "C1", "Gray");
-        put_patient("ETR2", "A4", "Gray");
-        put_patient("ETR1", "C2", "Yellow");
-        put_patient("BEN", "A1", "Gray");
-        put_patient("AEX", "C5", "Red");
-
-        put_patient("EVR1", "Nurse EVR1", "");
-        put_patient("EVR2", "Nurse EVR2", "");
-        put_patient("EVR3", "Nurse EVR3", "");
-        put_patient("EVR4", "Nurse EVR4", "");
-
-        put_patient("PYH", "Cashier PYH", "");
-
-        remove_patient("ETR1", "C1");*/
+//        put_patient("ETR1", "C1", "Gray");
+//        put_patient("ETR2", "A4", "Gray");
+//        put_patient("ETR1", "C2", "Yellow");
+//        put_patient("BEN", "A1", "Gray");
+//        put_patient("AEX", "C5", "Red");
+//
+//        put_patient("EVR1", "Nurse EVR1", "");
+//        put_patient("EVR2", "Nurse EVR2", "");
+//        put_patient("EVR3", "Nurse EVR3", "");
+//        put_patient("EVR4", "Nurse EVR4", "");
+//
+//        put_patient("PYH", "Cashier PYH", "");
+//
+//        remove_patient("ETR1", "C1");
 
         pack();
         //THCPStarter rec = new THCPStarter();
         //rec.start();
         setVisible(true);
 
-        System.exit(0);
+        // System.exit(0);
 
 
-    }
-
-    public void receiveObjects() throws IOException, ClassNotFoundException {
-
-        ServerSocket ss = new ServerSocket(99999);
-        Socket socket = ss.accept();
-        ObjectInputStream is;
-
-        while (true) {
-
-            System.out.println("Server Connected HCP wooo");
-            is = new ObjectInputStream(socket.getInputStream());
-            Object obj = (Object) is.readObject();
-            System.out.println("Obj - " + obj);
-
-        }
     }
 
     private void find_remove(String [][] patient_list, String id) {
@@ -127,7 +104,8 @@ public class HCP_GUI extends JDialog {
 
     }
 
-    public void remove_patient(String hall, String id) {
+    public void remove_patient(String hall, String id) throws InterruptedException {
+        monitor.lockInterruptibly();
 
         switch(hall) {
             case "BEN":
@@ -197,23 +175,19 @@ public class HCP_GUI extends JDialog {
                 System.out.println("V  O  I  D, please select another location");
         }
 
-
+        monitor.unlock();
     }
 
     private void add_patient_to_list (String [][] patients_list, String id, String color){
-
-        Boolean bool_patient_added = false;
 
         System.out.println("Add patient - " + patients_list);
 
         for (int i = 0; i < patients_list.length; i++){
 
-
-            if (bool_patient_added == false && patients_list[i][0] == null) {
+            if (patients_list[i][0] == null) {
                 patients_list[i][0] = id;
                 patients_list[i][1] = color;
-
-                bool_patient_added = true;
+                break;
             }
 
         }
@@ -222,7 +196,8 @@ public class HCP_GUI extends JDialog {
 
     }
 
-    public void put_patient(String hall, String id, String color){
+    public void put_patient(String hall, String id, String color) throws InterruptedException{
+        monitor.lockInterruptibly();
 
         switch(hall) {
             case "BEN":
@@ -292,6 +267,8 @@ public class HCP_GUI extends JDialog {
             default:
                 System.out.println("V  O  I  D, please select another location");
         }
+
+        monitor.unlock();
     }
 
 
@@ -359,7 +336,7 @@ public class HCP_GUI extends JDialog {
     }
 
 
-    private void draw_human(JPanel curr_frame, String[] patient){//TODO: rename
+    private void draw_human(JPanel curr_frame, String[] patient) {
 
         curr_frame.setLayout(new FlowLayout());
         curr_frame.add(new JLabel(patient[0]));
@@ -402,8 +379,8 @@ public class HCP_GUI extends JDialog {
 
     public static void main(String[] args) {
         HCP_GUI dialog = new HCP_GUI();
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
+        // dialog.pack();
+        // dialog.setVisible(true);
+        // System.exit(0);
     }
 }
