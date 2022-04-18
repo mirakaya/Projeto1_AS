@@ -271,8 +271,6 @@ public class HCP_GUI extends JDialog {
         monitor.unlock();
     }
 
-
-
     private void erase_and_draw(JPanel curr_panel, String [][] patients_list){ //TODO: rename
         curr_panel.removeAll();
 
