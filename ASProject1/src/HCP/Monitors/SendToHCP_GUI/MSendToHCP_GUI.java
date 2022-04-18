@@ -19,8 +19,8 @@ public class MSendToHCP_GUI implements ISendToHCP_GUI{
     public MSendToHCP_GUI() {
 
         try {
-            this.s = new Socket("127.0.0.1", 8765);
-            this.s.setKeepAlive(true);
+            s = new Socket("127.0.0.1", 8765);
+            s.setKeepAlive(true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -51,7 +51,7 @@ public class MSendToHCP_GUI implements ISendToHCP_GUI{
 
         Object orderToSend = requestqueue.dequeue();
 
-        ObjectOutputStream out = null;
+        ObjectOutputStream out;
         try {
             out = new ObjectOutputStream(s.getOutputStream());
             out.writeObject(orderToSend);

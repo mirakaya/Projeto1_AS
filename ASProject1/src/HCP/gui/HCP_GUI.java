@@ -1,6 +1,10 @@
 package HCP.gui;
 
-import HCP.Enums.HCPOrders;
+import HCP.Entities.THCPStarter;
+import HCP.gui.Circle;
+import HCP.gui.Triangle;
+import HCP.gui.Rectangle;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -59,33 +63,17 @@ public class HCP_GUI extends JDialog {
 
 
 
-
-
-
-
-    public HCP_GUI(){
-        setVisible(true);
+    public HCP_GUI()  {
         setContentPane(contentPane);
         setModal(true);
-        pack();
 
+        THCPStarter rec = new THCPStarter();
+        rec.start();
 
-
-
-
-        //
-
-
-
-        //draw rooms with fixed professionals (doctors)
-        find_list_to_draw(patients_MDR1);
-        find_list_to_draw(patients_MDR2);
-        find_list_to_draw(patients_MDR3);
-        find_list_to_draw(patients_MDR4);
 
 
         //test
-        /*put_patient("ETR1", "C1", "Gray");
+        put_patient("ETR1", "C1", "Gray");
         put_patient("ETR2", "A4", "Gray");
         put_patient("ETR1", "C2", "Yellow");
         put_patient("BEN", "A1", "Gray");
@@ -98,53 +86,26 @@ public class HCP_GUI extends JDialog {
 
         put_patient("PYH", "Cashier PYH", "");
 
-        remove_patient("ETR1", "C1");*/
+        remove_patient("ETR1", "C1");
+        pack();
+        setVisible(true);
 
-        System.out.println("Not all lost");
-
-        try {
-            receiveObjects();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
 
     }
 
     public void receiveObjects() throws IOException, ClassNotFoundException {
 
-        System.out.println("Bazongas");
-
-        int port = 8765;
-        ServerSocket ss = new ServerSocket(port);
-
+        ServerSocket ss = new ServerSocket(8765);
         Socket socket = ss.accept();
         ObjectInputStream is;
 
         while (true) {
-            System.out.println("Server Connected HCP");
+            System.out.println("Server Connected");
             is = new ObjectInputStream(socket.getInputStream());
-            Object[] obj = (Object[]) is.readObject();
-            System.out.println("Obj received woooooooo - " + obj);
-
-            //Obj will be an array with all the info needed
-
-
-
-            if (obj[0] == HCPOrders.DELETE.toString()){
-                remove_patient(obj[1].toString(), obj[2].toString());
-
-            } else if (obj[0] == HCPOrders.CREATE.toString()){
-                put_patient(obj[1].toString(), obj[2].toString(), obj[3].toString());
-
-
-            }
-
+            Object obj = (Object) is.readObject();
+            System.out.println("Obj - " + obj);
 
         }
-
-
     }
 
     private void find_remove(String [][] patient_list, String id) {
@@ -234,7 +195,7 @@ public class HCP_GUI extends JDialog {
 
     }
 
-    private void add_patient_to_list (String [][] patients_list, String id, String color){
+    private void add_patient_to_list (String [][] patients_list, String id, String color){ //TODO: rename
 
         Boolean bool_patient_added = false;
 
@@ -330,7 +291,7 @@ public class HCP_GUI extends JDialog {
 
 
 
-    private void erase_and_draw(JPanel curr_panel, String [][] patients_list){
+    private void erase_and_draw(JPanel curr_panel, String [][] patients_list){ //TODO: rename
         curr_panel.removeAll();
 
         for (int patient = 0; patient < patients_list.length; patient++){
@@ -399,33 +360,33 @@ public class HCP_GUI extends JDialog {
         curr_frame.add(new JLabel(patient[0]));
 
         if (patient[0] == "Cashier PYH"){
-            curr_frame.add(new HCP.gui.Triangle(orange));
+            curr_frame.add(new Triangle(orange));
 
         } else if (patient[0].charAt(0) == 'C') {
 
             if (patient[1] == "Blue") {
-                curr_frame.add(new HCP.gui.Circle(blue));
+                curr_frame.add(new Circle(blue));
             } else if (patient[1] == "Yellow") {
-                curr_frame.add(new HCP.gui.Circle(yellow));
+                curr_frame.add(new Circle(yellow));
             } else if (patient[1] == "Red") {
-                curr_frame.add(new HCP.gui.Circle(red));
+                curr_frame.add(new Circle(red));
             } else {
                 curr_frame.add(new Circle(gray));
             }
         }else if (patient[0].charAt(0) == 'A'){
 
             if (patient[1] == "Blue") {
-                curr_frame.add(new HCP.gui.Rectangle(blue));
+                curr_frame.add(new Rectangle(blue));
             } else if (patient[1] == "Yellow") {
-                curr_frame.add(new HCP.gui.Rectangle(yellow));
+                curr_frame.add(new Rectangle(yellow));
             } else if (patient[1] == "Red") {
-                curr_frame.add(new HCP.gui.Rectangle(red));
+                curr_frame.add(new Rectangle(red));
             } else {
                 curr_frame.add(new Rectangle(gray));
             }
 
         }else if (patient[0].charAt(0) == 'D') {
-            curr_frame.add(new HCP.gui.Triangle(cyan));
+            curr_frame.add(new Triangle(cyan));
 
         }else if (patient[0].charAt(0) == 'N') {
             curr_frame.add(new Triangle(pink));
@@ -434,7 +395,7 @@ public class HCP_GUI extends JDialog {
 
     }
 
-    private void main(String[] args) {
+    public static void main(String[] args) {
         HCP_GUI dialog = new HCP_GUI();
         dialog.pack();
         dialog.setVisible(true);
