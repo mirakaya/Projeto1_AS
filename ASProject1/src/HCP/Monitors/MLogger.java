@@ -58,11 +58,7 @@ public class MLogger implements ILogger{
         monitor.unlock();
     }
 
-    @Override
-    public void writeInfo(){
-
-        monitor.lock();
-
+    private void writeInfo() {
 
         String content = logsToWrite.dequeue();
 
@@ -74,15 +70,13 @@ public class MLogger implements ILogger{
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        monitor.unlock();
     }
 
     //writes 1 line of the log given the info to write (id) and the room
     @Override
-    public void createContent(String id, AvailableHalls room) {
+    public void createContent(String id, AvailableHalls room) throws InterruptedException {
 
-        monitor.lock();
+        monitor.lockInterruptibly();
 
         File f = new File(FILENAME);
 
