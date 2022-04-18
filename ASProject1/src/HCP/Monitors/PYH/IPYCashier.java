@@ -7,7 +7,7 @@ public interface IPYCashier {
      * patients left to attend to or not.
      * @return True if there are patients left or False if there isn't
      */
-    boolean anyPatientsLeft() throws InterruptedException;
+    boolean anyPatientsLeft();
 
     /**
      * Method used to wait for the arrival of patients.

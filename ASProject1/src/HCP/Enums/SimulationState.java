@@ -7,8 +7,5 @@ public enum SimulationState {
     STOP,
     END,
     AUTO,
-    MANUAL,
-
-
-
+    MANUAL
 }

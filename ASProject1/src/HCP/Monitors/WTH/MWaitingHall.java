@@ -1,8 +1,10 @@
 package HCP.Monitors.WTH;
 
+import HCP.Enums.AvailableHalls;
 import HCP.Enums.PatientAge;
 import HCP.Enums.PatientEvaluation;
 import HCP.Monitors.MHallNumber;
+import HCP.Monitors.Simulation.MSimulationController;
 
 import java.util.HashMap;
 
@@ -13,22 +15,32 @@ public class MWaitingHall implements IWTHPatient, IWTHCallCenter {
     private final HashMap<PatientAge, WaitingHallSplit> ageSplits = new HashMap<>();
     private final MHallNumber hallNumber = new MHallNumber();
 
-    public MWaitingHall(int childCount, int adultCount, int seatsPerAge, int mdwSeatsPerAge) {
+    public MWaitingHall(
+            int childCount, int adultCount,
+            int seatsPerAge, int mdwSeatsPerAge,
+            MSimulationController controller
+    ) {
         ageSplits.put(
                 PatientAge.CHILD,
-                new WaitingHallSplit(childCount, seatsPerAge, mdwSeatsPerAge, hallNumber)
+                new WaitingHallSplit(
+                        childCount, seatsPerAge, mdwSeatsPerAge,
+                        hallNumber, AvailableHalls.WTR1, controller
+                )
         );
 
         ageSplits.put(
                 PatientAge.ADULT,
-                new WaitingHallSplit(adultCount, seatsPerAge, mdwSeatsPerAge, hallNumber)
+                new WaitingHallSplit(
+                        adultCount, seatsPerAge, mdwSeatsPerAge,
+                        hallNumber, AvailableHalls.WTR2 ,controller
+                )
         );
     }
 
 
     @Override
-    public int waitWTRFree(PatientAge age) throws InterruptedException {
-        return ageSplits.get(age).waitWTRFree(age);
+    public int waitWTRFree(PatientAge age, PatientEvaluation evaluation) throws InterruptedException {
+        return ageSplits.get(age).waitWTRFree(age, evaluation);
     }
 
     @Override

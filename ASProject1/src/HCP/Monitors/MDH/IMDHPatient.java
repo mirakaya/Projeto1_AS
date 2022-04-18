@@ -1,6 +1,7 @@
 package HCP.Monitors.MDH;
 
 import HCP.Enums.PatientAge;
+import HCP.Enums.PatientEvaluation;
 
 /**
  * Methods used by the patients to interact with the Medical Hall
@@ -14,12 +15,15 @@ public interface IMDHPatient {
      * @param age Age of the patient.
      * @return The number of the room the patient will occupy.
      */
-    int waitMDRCall(PatientAge age, int wtn) throws InterruptedException;
+    int waitMDRCall(PatientAge age, int wtn, PatientEvaluation evaluation) throws InterruptedException;
 
     /**
      * Enter the MDR and wait for the Medical Appointment ot finish.
      * @param age Age of the patient
      * @param room The number of the room the patient will occupy.
      */
-    void waitMDRConcluded(PatientAge age, int wtn, int room) throws InterruptedException;
+    void waitMDRConcluded(
+            PatientAge age, int wtn,
+            int room, PatientEvaluation evaluation
+    ) throws InterruptedException;
 }

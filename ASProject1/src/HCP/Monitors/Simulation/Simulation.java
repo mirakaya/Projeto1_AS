@@ -1,7 +1,6 @@
 package HCP.Monitors.Simulation;
 
 import HCP.Entities.TCallCenter;
-import HCP.Entities.THCPStarter;
 import HCP.Entities.TNurse;
 import HCP.Entities.TPatient;
 import HCP.Enums.PatientAge;
@@ -11,9 +10,8 @@ import HCP.Monitors.EVH.MEvaluationHall;
 import HCP.Monitors.MDH.MMedicalHall;
 import HCP.Monitors.MLogger;
 import HCP.Monitors.PYH.MPaymentHall;
-import HCP.Monitors.SendToHCP_GUI.ISendToHCP_GUI;
-import HCP.Monitors.SendToHCP_GUI.MSendToHCP_GUI;
 import HCP.Monitors.WTH.MWaitingHall;
+import HCP.gui.HCP_GUI;
 
 /**
  * Class representing a single simulation. This class
@@ -31,8 +29,6 @@ public class Simulation {
     private final int maxPaymentDelay;
     private final int maxTimeToMove;
 
-    //private final MSendToHCP_GUI sendToHCP_gui;
-
     private ISCSimulation simulationController;
 
     private final MCCHall cch;
@@ -47,8 +43,7 @@ public class Simulation {
     private final TCallCenter callCenterThread;
     private final TNurse nurseThread;
 
-
-
+    private final HCP_GUI gui;
     private final MLogger log;
 
     /**
@@ -62,7 +57,7 @@ public class Simulation {
     public Simulation(
             int childCount, int adultCount, int seatCount,
             int maxEvaluationDelay, int maxTreatmentDelay,
-            int maxPaymentDelay, int maxTimeToMove, MLogger log
+            int maxPaymentDelay, int maxTimeToMove, HCP_GUI gui
     ) {
         this.childCount = childCount;
         this.adultCount = adultCount;
@@ -72,44 +67,33 @@ public class Simulation {
         this.maxPaymentDelay = maxPaymentDelay;
         this.maxTimeToMove = maxTimeToMove;
 
-        MSimulationController simulationController = new MSimulationController();
-        this.simulationController = simulationController;
-
         patientsCount = childCount + adultCount;
-        this.log = log;
 
-        cch = new MCCHall();
+        MSimulationController simulationController = new MSimulationController(patientsCount);
+        this.simulationController = simulationController;
+        this.log = new MLogger(patientsCount);
+        this.gui = gui;
 
-        //TODO: is it really 4?
-        eh = new MEntranceHall(4);
-        evh = new MEvaluationHall(patientsCount, maxEvaluationDelay);
-        wth = new MWaitingHall(childCount, adultCount, seatCount / 2, 1);
-        mdh = new MMedicalHall(childCount, adultCount, maxTreatmentDelay);
-        pyh = new MPaymentHall(patientsCount, maxPaymentDelay);
+        cch = new MCCHall(simulationController);
+
+        eh = new MEntranceHall(seatCount, simulationController);
+        evh = new MEvaluationHall(patientsCount, maxEvaluationDelay, simulationController);
+        wth = new MWaitingHall(childCount, adultCount, seatCount / 2, 1, simulationController);
+        mdh = new MMedicalHall(childCount, adultCount, maxTreatmentDelay, simulationController);
+        pyh = new MPaymentHall(patientsCount, maxPaymentDelay, simulationController);
 
         callCenterThread = new TCallCenter(eh, cch, wth, mdh);
         nurseThread = new TNurse(evh);
         childThreads = new TPatient[childCount];
         adultThreads = new TPatient[adultCount];
 
-        //THCPStarter thcpStarter = new THCPStarter();
-        //thcpStarter.start();
-
-
-
-        //this.sendToHCP_gui = new MSendToHCP_GUI();
-
         for (int i = 0; i < childCount; i++) {
-            childThreads[i] = new TPatient(eh, cch, evh, wth, mdh, pyh, PatientAge.CHILD,log /*, sendToHCP_gui*/);
+            childThreads[i] = new TPatient(eh, cch, evh, wth, mdh, pyh, PatientAge.CHILD);
         }
 
         for (int i = 0; i < adultCount; i++) {
-            adultThreads[i] = new TPatient(eh, cch, evh, wth, mdh, pyh, PatientAge.ADULT, log  /*,sendToHCP_gui*/);
+            adultThreads[i] = new TPatient(eh, cch, evh, wth, mdh, pyh, PatientAge.ADULT);
         }
-
-
-
-
     }
 
     public void start() {
@@ -163,6 +147,10 @@ public class Simulation {
         for (int i = 0; i < adultCount; i++) {
             adultThreads[i].interrupt();
         }
+
+        try {
+            join();
+        } catch (InterruptedException ignored) {}
     }
 
     public void setAuto(boolean isAuto) {

@@ -49,24 +49,22 @@ public class TPatient extends Thread {
 
 
             eh.waitFreeRoom(id, age);
-            eh.waitEvaluationHallCall(age);
-            eh.awakeWaitingPatient(age);
+            int etn = eh.waitEvaluationHallCall(id, age);
+            eh.awakeWaitingPatient(etn, age);
 
-            PatientEvaluation evaluation = evh.waitEvaluation();
+            PatientEvaluation evaluation = evh.waitEvaluation(etn, age);
             cch.informLeftEVHall();
 
-            int wtn = wth.waitWTRFree(age);
-
-
+            int wtn = wth.waitWTRFree(age, evaluation);
             cch.informLeftWTR(age);
             wth.waitMDWCall(wtn, age,evaluation);
 
-            int mdhRoom = mdh.waitMDRCall(age, wtn);
+            int mdhRoom = mdh.waitMDRCall(age, wtn, evaluation);
             cch.informLeftMDW(age);
-            mdh.waitMDRConcluded(age, wtn, mdhRoom);
+            mdh.waitMDRConcluded(age, wtn, mdhRoom, evaluation);
             cch.informLeftMDR(age);
 
-            pyh.waitPayment(id);
+            pyh.waitPayment(age, evaluation);
 
         } catch (InterruptedException ignored) {}
     }

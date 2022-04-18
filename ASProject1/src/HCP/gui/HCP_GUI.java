@@ -3,6 +3,7 @@ package HCP.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static java.awt.Color.*;
@@ -65,35 +66,32 @@ public class HCP_GUI extends JDialog {
 
 
         //test
-//        put_patient("ETR1", "C1", "Gray");
-//        put_patient("ETR2", "A4", "Gray");
-//        put_patient("ETR1", "C2", "Yellow");
-//        put_patient("BEN", "A1", "Gray");
-//        put_patient("AEX", "C5", "Red");
+//        try {
+//            put_patient("ETR1", "C1", "Gray");
+//            put_patient("ETR2", "A4", "Gray");
+//            put_patient("ETR1", "C2", "Yellow");
+//            put_patient("BEN", "A1", "Gray");
+//            put_patient("AEX", "C5", "Red");
 //
-//        put_patient("EVR1", "Nurse EVR1", "");
-//        put_patient("EVR2", "Nurse EVR2", "");
-//        put_patient("EVR3", "Nurse EVR3", "");
-//        put_patient("EVR4", "Nurse EVR4", "");
+//            put_patient("EVR1", "Nurse EVR1", "");
+//            put_patient("EVR2", "Nurse EVR2", "");
+//            put_patient("EVR3", "Nurse EVR3", "");
+//            put_patient("EVR4", "Nurse EVR4", "");
 //
-//        put_patient("PYH", "Cashier PYH", "");
+//            put_patient("PYH", "Cashier PYH", "");
 //
-//        remove_patient("ETR1", "C1");
+//            remove_patient("ETR1", "C1");
+//        } catch (InterruptedException ignored) {}
 
         pack();
-        //THCPStarter rec = new THCPStarter();
-        //rec.start();
         setVisible(true);
-
-        // System.exit(0);
-
 
     }
 
     private void find_remove(String [][] patient_list, String id) {
         for (int pos = 0; pos < patient_list.length; pos ++){
 
-            if (patient_list[pos][0] == id){
+            if (Objects.equals(patient_list[pos][0], id)){
 
                 patient_list[pos][0] = null;
 
@@ -339,27 +337,27 @@ public class HCP_GUI extends JDialog {
         curr_frame.setLayout(new FlowLayout());
         curr_frame.add(new JLabel(patient[0]));
 
-        if (patient[0] == "Cashier PYH"){
+        if (Objects.equals(patient[0], "Cashier PYH")){
             curr_frame.add(new Triangle(orange));
 
         } else if (patient[0].charAt(0) == 'C') {
 
-            if (patient[1] == "Blue") {
+            if (Objects.equals(patient[1], "Blue")) {
                 curr_frame.add(new Circle(blue));
-            } else if (patient[1] == "Yellow") {
+            } else if (Objects.equals(patient[1], "Yellow")) {
                 curr_frame.add(new Circle(yellow));
-            } else if (patient[1] == "Red") {
+            } else if (Objects.equals(patient[1], "Red")) {
                 curr_frame.add(new Circle(red));
             } else {
                 curr_frame.add(new Circle(gray));
             }
         }else if (patient[0].charAt(0) == 'A'){
 
-            if (patient[1] == "Blue") {
+            if (Objects.equals(patient[1], "Blue")) {
                 curr_frame.add(new Rectangle(blue));
-            } else if (patient[1] == "Yellow") {
+            } else if (Objects.equals(patient[1], "Yellow")) {
                 curr_frame.add(new Rectangle(yellow));
-            } else if (patient[1] == "Red") {
+            } else if (Objects.equals(patient[1], "Red")) {
                 curr_frame.add(new Rectangle(red));
             } else {
                 curr_frame.add(new Rectangle(gray));

@@ -1,29 +1,46 @@
 package HCP.Monitors.PYH;
 
+import HCP.Enums.AvailableHalls;
+import HCP.Enums.PatientAge;
+import HCP.Enums.PatientEvaluation;
 import HCP.Monitors.ConditionHallQueue;
+import HCP.Monitors.Simulation.MSimulationController;
+import HCP.gui.PatientColors;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class MPaymentHall implements IPYPatient, IPYCashier{
+public class MPaymentHall implements IPYPatient, IPYCashier {
+    private final static Map<PatientEvaluation, PatientColors> evalToColor = Map.of(
+            PatientEvaluation.BLUE, PatientColors.BLUE,
+            PatientEvaluation.YELLOW, PatientColors.YELLOW,
+            PatientEvaluation.RED, PatientColors.RED
+    );
+
+    private final MSimulationController controller;
 
     private final ReentrantLock monitor = new ReentrantLock();
 
+    private boolean isSomeonePaying = false;
     private final Condition waitForPatient = monitor.newCondition();
 
-    private boolean isSomeonePaying = false;
     private final ConditionHallQueue orderedWaitPYHCall = new ConditionHallQueue();
 
-    private int totalPatients;
+    private boolean isConcluded = false;
+    private final Condition waitConcluded = monitor.newCondition();
+
+    private final int totalPatients;
 
     private int patientsProcessed = 0;
 
-    private int patientsArrived = 0;
-    private int timePay;
+    private final int timePay;
 
-    public MPaymentHall(int totalPatients, int timePay) {
+    private int pynCounter = 1;
 
+    public MPaymentHall(int totalPatients, int timePay, MSimulationController controller) {
+        this.controller = controller;
         this.totalPatients = totalPatients;
         this.timePay = timePay;
 
@@ -32,33 +49,18 @@ public class MPaymentHall implements IPYPatient, IPYCashier{
 
     //Cashier
     @Override
-    public boolean anyPatientsLeft() throws InterruptedException {
-
-        monitor.lockInterruptibly();
-
-        if (totalPatients -1 == patientsProcessed){
-            boolean returnValue = false;
-            monitor.unlock();
-            return returnValue;
-        } else {
-            boolean returnValue = true;
-            monitor.unlock();
-            return returnValue;
-        }
-
+    public boolean anyPatientsLeft() {
+        return totalPatients == patientsProcessed;
     }
 
     @Override
-    public void waitPatients() throws InterruptedException{
+    public void waitPatients() throws InterruptedException {
+        controller.waitIfPaused();
 
         monitor.lockInterruptibly();
 
-        if (patientsArrived == patientsProcessed ){
-            try {
-                waitForPatient.await();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+        while (!isSomeonePaying) {
+            waitForPatient.await();
         }
 
         monitor.unlock();
@@ -67,17 +69,18 @@ public class MPaymentHall implements IPYPatient, IPYCashier{
 
     @Override
     public void processNextPatient() throws InterruptedException{
+        controller.waitIfPaused();
 
         monitor.lockInterruptibly();
 
-        try {
-            TimeUnit.MILLISECONDS.sleep(timePay);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        controller.putCashier();
+        TimeUnit.MILLISECONDS.sleep(timePay);
 
         patientsProcessed++;
-        orderedWaitPYHCall.signal();
+        isConcluded = true;
+        controller.removeCashier();
+
+        waitConcluded.signal();
 
         monitor.unlock();
 
@@ -85,21 +88,34 @@ public class MPaymentHall implements IPYPatient, IPYCashier{
 
     //Patient
     @Override
-    public void waitPayment(int id) throws InterruptedException{
+    public void waitPayment(PatientAge age, PatientEvaluation evaluation) throws InterruptedException {
+        controller.waitIfPaused();
 
         monitor.lockInterruptibly();
-        System.out.println("Patient with id " + id + " entered WTR");
+        int pyn = pynCounter++;
 
-        if (isSomeonePaying == true) {
-            patientsArrived++;
+        controller.log(age, pyn, evaluation, AvailableHalls.PYH);
+        controller.putPatient(AvailableHalls.PYH, age, pyn, evalToColor.get(evaluation));
+        //System.out.println("Patient with id " + id + " entered WTR");
+
+        while (isSomeonePaying) {
             orderedWaitPYHCall.await(monitor.newCondition());
         }
-        else{
-            isSomeonePaying = true;
-            waitForPatient.signal();
+
+        isSomeonePaying = true;
+        waitForPatient.signal();
+
+        while(!isConcluded) {
+            waitConcluded.await();
         }
 
-        System.out.println(id + " exited WTR");
+        controller.log(age, pyn, evaluation, AvailableHalls.AEX);
+        controller.removePatient(AvailableHalls.PYH, age, pyn);
+        controller.putPatient(AvailableHalls.AEX, age, pyn, evalToColor.get(evaluation));
+        //System.out.println(id + " exited WTR");
+
+        isConcluded = false;
+        orderedWaitPYHCall.signal();
         monitor.unlock();
 
     }
