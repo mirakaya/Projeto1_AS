@@ -1,8 +1,5 @@
-package HCP.Monitors.Simulation;
+package HCP.Entities;
 
-import HCP.Entities.TCallCenter;
-import HCP.Entities.TNurse;
-import HCP.Entities.TPatient;
 import HCP.Enums.PatientAge;
 import HCP.Monitors.CCH.MCCHall;
 import HCP.Monitors.EH.MEntranceHall;
@@ -10,6 +7,7 @@ import HCP.Monitors.EVH.MEvaluationHall;
 import HCP.Monitors.MDH.MMedicalHall;
 import HCP.Monitors.MLogger;
 import HCP.Monitors.PYH.MPaymentHall;
+import HCP.Monitors.Simulation.MSimulationController;
 import HCP.Monitors.WTH.MWaitingHall;
 import HCP.gui.HCP_GUI;
 
@@ -18,7 +16,7 @@ import HCP.gui.HCP_GUI;
  * allows to start a simulation with several parameters
  * and to control it.
  */
-public class Simulation {
+public class TSimulationRunner {
 
     private final int childCount;
     private final int adultCount;
@@ -29,7 +27,7 @@ public class Simulation {
     private final int maxPaymentDelay;
     private final int maxTimeToMove;
 
-    private ISCSimulation simulationController;
+    private MSimulationController simulationController;
 
     private final MCCHall cch;
     private final MEntranceHall eh;
@@ -54,10 +52,10 @@ public class Simulation {
      * @param maxTreatmentDelay Maximum delay in milliseconds for treatment of a patient
      * @param maxTimeToMove Maximum delay in milliseconds for payment by a patient
      */
-    public Simulation(
+    public TSimulationRunner(
             int childCount, int adultCount, int seatCount,
             int maxEvaluationDelay, int maxTreatmentDelay,
-            int maxPaymentDelay, int maxTimeToMove, HCP_GUI gui
+            int maxPaymentDelay, int maxTimeToMove
     ) {
         this.childCount = childCount;
         this.adultCount = adultCount;
@@ -72,7 +70,7 @@ public class Simulation {
         MSimulationController simulationController = new MSimulationController(patientsCount);
         this.simulationController = simulationController;
         this.log = new MLogger(patientsCount);
-        this.gui = gui;
+        this.gui = new HCP_GUI();
 
         cch = new MCCHall(simulationController);
 
@@ -151,6 +149,8 @@ public class Simulation {
         try {
             join();
         } catch (InterruptedException ignored) {}
+
+        simulationController.cleanup();
     }
 
     public void setAuto(boolean isAuto) {

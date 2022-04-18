@@ -61,8 +61,8 @@ public class HCP_GUI extends JDialog {
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setContentPane(contentPane);
+        System.out.println("Reached here");
         setModal(true);
-
 
 
         //test
@@ -84,6 +84,7 @@ public class HCP_GUI extends JDialog {
 //        } catch (InterruptedException ignored) {}
 
         pack();
+        System.out.println("Reached here too");
         setVisible(true);
 
     }

@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Objects;
 import javax.swing.*;
 
 import static java.lang.Integer.parseInt;
@@ -57,41 +58,21 @@ public class CCP_GUI {
     private JPanel radio_panel = new JPanel();
 
     private Socket s;
+    private ObjectOutputStream out;
     private int port = 9090;
-    ServerSocket ss = new ServerSocket(port);
 
 
-    public CCP_GUI() throws IOException, ClassNotFoundException {
+    public CCP_GUI() {
 
         BuildGUI();
 
         //8080 to receive, 9090 to send
         try {
             s = new Socket("127.0.0.1", 8080);
+            out = new ObjectOutputStream(s.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-        receiveObjects();
-
-    }
-
-    private void receiveObjects() throws IOException, ClassNotFoundException {
-
-        Socket socket = ss.accept();
-        ObjectInputStream is;
-
-        while (true) {
-            System.out.println("Server Connected");
-            is = new ObjectInputStream(socket.getInputStream());
-            Object obj = (Object) is.readObject();
-            System.out.println("Obj received - " + obj);
-
-            l_state.setText(obj.toString());
-            l_state.updateUI();
-        }
-
 
     }
 
@@ -164,7 +145,6 @@ public class CCP_GUI {
                 //send the array through a socket
                 try {
 
-                    ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
                     out.writeObject(info);
 
                 } catch (IOException ioException) {
@@ -206,7 +186,7 @@ public class CCP_GUI {
                System.out.println("Start");
 
                try {
-                   ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
+
                    out.writeObject(SimulationState.START);
 
                } catch (IOException ioException) {
@@ -223,7 +203,7 @@ public class CCP_GUI {
                System.out.println("Sus");
 
                try {
-                   ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
+
                    out.writeObject(SimulationState.SUSPEND);
 
                } catch (IOException ioException) {
@@ -240,7 +220,7 @@ public class CCP_GUI {
                System.out.println("Resume");
 
                try {
-                   ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
+
                    out.writeObject(SimulationState.RESUME);
 
                } catch (IOException ioException) {
@@ -257,7 +237,6 @@ public class CCP_GUI {
                System.out.println("Stop");
 
                try {
-                   ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
                    out.writeObject(SimulationState.STOP);
 
                } catch (IOException ioException) {
@@ -275,7 +254,7 @@ public class CCP_GUI {
                System.out.println("End");
 
                try {
-                   ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
+
                    out.writeObject(SimulationState.END);
 
                } catch (IOException ioException) {
@@ -314,9 +293,8 @@ public class CCP_GUI {
                AbstractButton aButton = (AbstractButton) actionEvent.getSource();
                System.out.println("Selected: " + aButton.getText());
 
-               if (aButton.getText() == "Auto") {
+               if (Objects.equals(aButton.getText(), "Auto")) {
                    try {
-                       ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
                        out.writeObject(SimulationState.AUTO);
 
                    } catch (IOException ioException) {
@@ -324,7 +302,7 @@ public class CCP_GUI {
                    }
                } else {
                    try {
-                       ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
+
                        out.writeObject(SimulationState.MANUAL);
 
                    } catch (IOException ioException) {

@@ -35,7 +35,7 @@ public class MCCHall implements ICCHallPatient, ICCHallCallCenter, ICCHallSimula
         controller.waitIfPaused();
         monitor.lockInterruptibly();
 
-        while (!isAuto && movementCount > 1) waitCC.await();
+        while (!isAuto && movementCount < 1) waitCC.await();
 
         if (!isAuto) movementCount--;
 
@@ -105,6 +105,8 @@ public class MCCHall implements ICCHallPatient, ICCHallCallCenter, ICCHallSimula
     public void setAuto(boolean isAuto) {
         monitor.lock();
         this.isAuto = isAuto;
+        movementCount = 1;
+        waitCall.signal();
         monitor.unlock();
     }
 
